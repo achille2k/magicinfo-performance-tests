@@ -14,7 +14,7 @@ Project này sử dụng [Grafana K6](https://k6.io/) để kiểm thử hiệu 
 - 📡 **Đăng ký thiết bị** (Device registration/check)
 - 💓 **Heartbeat** định kỳ (mỗi 30 giây)
 - 📋 **Lấy playlist** được gán cho màn hình (mỗi 5 phút)
-- 📥 **Tải metadata nội dung** trong playlist đó (đúng nội dung được trình chiếu)
+- 📥 **Tải nội dung** trong playlist đó (đúng nội dung được trình chiếu)
 
 ## 🏗 Cấu trúc Project
 
