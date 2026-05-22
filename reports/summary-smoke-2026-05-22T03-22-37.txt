@@ -1,0 +1,43 @@
+=================================================================
+  MagicInfo Performance Test Report
+  Scenario : SMOKE
+  Finished : 05/22/2026, 10:22:37
+=================================================================
+
+THRESHOLDS
+---------------------------------------------
+  [FAIL] magicinfo_api_availability: rate>0.95
+  [PASS] magicinfo_device_reg_duration: p(95)<3000
+  [PASS] magicinfo_auth_duration: p(95)<1000
+  [PASS] magicinfo_content_check_duration: p(95)<3000
+  [PASS] magicinfo_content_download_duration: p(95)<10000
+  [PASS] http_req_duration: p(99)<5000
+  [PASS] http_req_duration: p(95)<2000
+  [PASS] magicinfo_schedule_check_duration: p(95)<3000
+  [PASS] magicinfo_heartbeat_duration: p(95)<2000
+  [FAIL] http_req_failed: rate<0.05
+
+KEY METRICS
+---------------------------------------------
+  HTTP Request Duration
+    avg=10.9ms  p90=29.4ms  p95=41.4ms  max=81.0ms
+  Auth Duration
+    avg=79.7ms  p90=84.5ms  p95=87.8ms  max=91.0ms
+  Heartbeat Duration
+    avg=4.9ms  p90=6.7ms  p95=10.4ms  max=14.0ms
+  Content Check Duration
+    avg=28.9ms  p90=37.1ms  p95=38.8ms  max=54.0ms
+  Device Reg Duration
+    avg=3.2ms  p90=4.2ms  p95=4.6ms  max=5.0ms
+
+  HTTP Failed: 11.76%
+  API Availability: 88.46%
+
+  Total Requests: 136
+  Total Iterations: 84
+  Auth Success: 6
+  Heartbeat Success: 84
+  Heartbeat Fail: 0
+  Content Check Success: 20
+
+=================================================================

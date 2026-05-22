@@ -1,0 +1,41 @@
+=================================================================
+  MagicInfo Performance Test Report
+  Scenario : LOAD
+  Finished : 05/22/2026, 09:34:37
+=================================================================
+
+THRESHOLDS
+---------------------------------------------
+  [PASS] magicinfo_auth_duration: p(95)<1000
+  [PASS] magicinfo_content_check_duration: p(95)<3000
+  [PASS] magicinfo_api_availability: rate>0.95
+  [PASS] magicinfo_device_reg_duration: p(95)<3000
+  [PASS] magicinfo_heartbeat_duration: p(95)<2000
+  [PASS] http_req_duration: p(99)<5000
+  [PASS] http_req_duration: p(95)<2000
+  [PASS] http_req_failed: rate<0.05
+
+KEY METRICS
+---------------------------------------------
+  HTTP Request Duration
+    avg=6.9ms  p90=15.1ms  p95=16.1ms  max=118.6ms
+  Auth Duration
+    avg=83.9ms  p90=101.0ms  p95=106.0ms  max=121.0ms
+  Heartbeat Duration
+    avg=6.5ms  p90=15.0ms  p95=16.0ms  max=35.0ms
+  Content Check Duration
+    avg=4.3ms  p90=9.0ms  p95=11.0ms  max=42.0ms
+  Device Reg Duration
+    avg=3.1ms  p90=4.0ms  p95=4.0ms  max=8.0ms
+
+  HTTP Failed: 0.00%
+  API Availability: 100.00%
+
+  Total Requests: 16987
+  Total Iterations: 13727
+  Auth Success: 201
+  Heartbeat Success: 13727
+  Heartbeat Fail: 0
+  Content Check Success: 2858
+
+=================================================================

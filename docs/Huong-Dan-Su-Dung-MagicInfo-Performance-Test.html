@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Hướng Dẫn Sử Dụng — MagicInfo Performance Test Suite</title>
+<!--[if gte mso 9]>
+<xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml>
+<![endif]-->
+<style>
+  /* ── Base ── */
+  body {
+    font-family: "Times New Roman", serif;
+    font-size: 13pt;
+    line-height: 1.8;
+    color: #1a1a1a;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 72px;
+    background: #fff;
+  }
+
+  /* ── Cover page ── */
+  .cover {
+    text-align: center;
+    page-break-after: always;
+    padding: 80px 0 60px;
+    border-bottom: 4px double #1e3a8a;
+  }
+  .cover-logo {
+    font-size: 48px;
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-size: 26pt;
+    color: #1e3a8a;
+    font-weight: bold;
+    line-height: 1.3;
+    margin: 0 0 12px;
+  }
+  .cover h2 {
+    font-size: 16pt;
+    color: #374151;
+    font-weight: normal;
+    margin: 0 0 40px;
+  }
+  .cover-meta {
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    display: inline-block;
+    padding: 20px 40px;
+    text-align: left;
+    font-size: 11pt;
+    line-height: 2;
+    background: #f9fafb;
+    margin-top: 20px;
+  }
+  .cover-meta strong { color: #1e3a8a; }
+  .cover-footer {
+    margin-top: 50px;
+    font-size: 10pt;
+    color: #6b7280;
+  }
+  .confidential {
+    display: inline-block;
+    border: 1px solid #dc2626;
+    color: #dc2626;
+    font-size: 9pt;
+    font-weight: bold;
+    padding: 3px 12px;
+    letter-spacing: 2px;
+    margin-top: 16px;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    page-break-after: always;
+    padding-bottom: 40px;
+  }
+  .toc h2 { color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 6px; }
+  .toc ul { list-style: none; padding: 0; }
+  .toc > ul > li { margin: 8px 0; font-weight: bold; font-size: 12pt; }
+  .toc > ul > li > ul > li {
+    margin: 4px 0 4px 24px;
+    font-weight: normal;
+    font-size: 11pt;
+  }
+  .toc a { color: #1e3a8a; text-decoration: none; }
+
+  /* ── Headings ── */
+  h1.chapter {
+    font-size: 18pt;
+    color: #1e3a8a;
+    border-left: 6px solid #1e3a8a;
+    padding-left: 14px;
+    margin-top: 48px;
+    margin-bottom: 20px;
+    page-break-before: always;
+  }
+  h1.chapter:first-of-type { page-break-before: avoid; }
+  h2 { font-size: 14pt; color: #1e40af; margin-top: 32px; margin-bottom: 12px; }
+  h3 { font-size: 12pt; color: #374151; margin-top: 24px; margin-bottom: 8px; font-style: italic; }
+
+  /* ── Info boxes ── */
+  .box {
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin: 18px 0;
+    font-size: 11pt;
+  }
+  .box-info    { background: #eff6ff; border-left: 4px solid #3b82f6; }
+  .box-warning { background: #fffbeb; border-left: 4px solid #f59e0b; }
+  .box-success { background: #f0fdf4; border-left: 4px solid #22c55e; }
+  .box-danger  { background: #fef2f2; border-left: 4px solid #ef4444; }
+  .box-icon { font-size: 16px; margin-right: 6px; }
+
+  /* ── Code blocks ── */
+  pre {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-left: 4px solid #1e3a8a;
+    border-radius: 4px;
+    padding: 14px 18px;
+    font-family: "Courier New", monospace;
+    font-size: 10pt;
+    overflow-x: auto;
+    line-height: 1.6;
+    margin: 14px 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  code {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: "Courier New", monospace;
+    font-size: 10pt;
+  }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 11pt;
+  }
+  th {
+    background: #1e3a8a;
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 10pt;
+    font-weight: bold;
+  }
+  td { padding: 9px 14px; border-bottom: 1px solid #e5e7eb; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  tr:hover td { background: #eff6ff; }
+
+  /* ── Steps ── */
+  .step {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0;
+    align-items: flex-start;
+  }
+  .step-num {
+    background: #1e3a8a;
+    color: #fff;
+    font-weight: bold;
+    font-size: 11pt;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-body { flex: 1; }
+  .step-title { font-weight: bold; color: #1e3a8a; margin-bottom: 4px; }
+
+  /* ── Badge ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 9pt;
+    font-weight: bold;
+    margin: 0 3px;
+  }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-blue  { background: #dbeafe; color: #1e40af; }
+  .badge-yellow{ background: #fef9c3; color: #854d0e; }
+  .badge-red   { background: #fee2e2; color: #b91c1c; }
+
+  /* ── Signature block ── */
+  .signature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 40px;
+  }
+  .signature-box {
+    border: 1px solid #d1d5db;
+    padding: 20px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .signature-title { font-weight: bold; color: #1e3a8a; margin-bottom: 60px; }
+  .signature-line { border-top: 1px solid #374151; padding-top: 8px; font-size: 10pt; color: #6b7280; }
+
+  /* ── Print ── */
+  @media print {
+    body { padding: 40px 56px; font-size: 12pt; }
+    pre  { font-size: 9pt; }
+    .cover { page-break-after: always; }
+    h1.chapter { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TRANG BÌA
+═══════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo">🖥️</div>
+  <h1>HƯỚNG DẪN SỬ DỤNG<br/>CÔNG CỤ KIỂM THỬ HIỆU NĂNG</h1>
+  <h2>MagicInfo Performance Test Suite<br/>
+  <em style="font-size:13pt;color:#6b7280">Giả lập 200 màn hình kết nối đến MagicInfo Server</em></h2>
+
+  <div class="cover-meta">
+    <strong>Phiên bản:</strong> &nbsp;1.0.0<br/>
+    <strong>Ngày lập:</strong> &nbsp;22/05/2026<br/>
+    <strong>Áp dụng cho:</strong> &nbsp;MagicInfo Server 9.x (21.1040.2+)<br/>
+    <strong>Công cụ:</strong> &nbsp;K6 Load Testing Framework<br/>
+    <strong>Ngôn ngữ:</strong> &nbsp;JavaScript (ES Modules)
+  </div>
+
+  <div class="cover-footer">
+    <div class="confidential">🔒 TÀI LIỆU NỘI BỘ — KHÔNG PHÁT TÁN</div><br/>
+    Tài liệu này dùng cho mục đích bàn giao và hướng dẫn vận hành.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MỤC LỤC
+═══════════════════════════════════════════════════════════ -->
+<div class="toc">
+  <h2>📋 Mục Lục</h2>
+  <ul>
+    <li><a href="#overview">1. Tổng quan hệ thống</a>
+      <ul>
+        <li><a href="#purpose">1.1. Mục đích</a></li>
+        <li><a href="#architecture">1.2. Kiến trúc công cụ</a></li>
+        <li><a href="#simulation">1.3. Kịch bản giả lập</a></li>
+      </ul>
+    </li>
+    <li><a href="#install">2. Cài đặt và cấu hình</a>
+      <ul>
+        <li><a href="#requirements">2.1. Yêu cầu hệ thống</a></li>
+        <li><a href="#setup">2.2. Hướng dẫn cài đặt</a></li>
+        <li><a href="#config">2.3. Cấu hình kết nối</a></li>
+      </ul>
+    </li>
+    <li><a href="#run">3. Hướng dẫn chạy kiểm thử</a>
+      <ul>
+        <li><a href="#scenarios">3.1. Các kịch bản kiểm thử</a></li>
+        <li><a href="#commands">3.2. Lệnh chạy</a></li>
+        <li><a href="#monitor">3.3. Theo dõi trong quá trình chạy</a></li>
+      </ul>
+    </li>
+    <li><a href="#report">4. Hướng dẫn xem báo cáo</a>
+      <ul>
+        <li><a href="#gen-report">4.1. Tạo báo cáo HTML</a></li>
+        <li><a href="#read-report">4.2. Đọc và phân tích báo cáo</a></li>
+        <li><a href="#thresholds">4.3. Giải thích các ngưỡng</a></li>
+        <li><a href="#metrics">4.4. Bảng giải thích chỉ số</a></li>
+      </ul>
+    </li>
+    <li><a href="#interpret">5. Phân tích và đánh giá kết quả</a>
+      <ul>
+        <li><a href="#pass-fail">5.1. Tiêu chí đánh giá</a></li>
+        <li><a href="#troubleshoot">5.2. Xử lý sự cố thường gặp</a></li>
+      </ul>
+    </li>
+    <li><a href="#api">6. Tham chiếu API được kiểm thử</a></li>
+    <li><a href="#appendix">7. Phụ lục</a></li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHƯƠNG 1: TỔNG QUAN
+═══════════════════════════════════════════════════════════ -->
+<h1 class="chapter" id="overview">1. Tổng Quan Hệ Thống</h1>
+
+<h2 id="purpose">1.1. Mục Đích</h2>
+<p>
+  Bộ công cụ <strong>MagicInfo Performance Test Suite</strong> được thiết kế để kiểm thử hiệu năng
+  của hệ thống quản lý màn hình <strong>Samsung MagicInfo Server</strong>. Công cụ giả lập
+  <strong>200 màn hình hiển thị kỹ thuật số</strong> kết nối đồng thời đến server, thực hiện đầy
+  đủ các tác vụ mà một màn hình thực sự thực hiện trong môi trường vận hành.
+</p>
+
+<div class="box box-info">
+  <span class="box-icon">ℹ️</span>
+  <strong>Đối tượng sử dụng:</strong> Kỹ sư hạ tầng, quản trị viên hệ thống, nhân viên QA/QC
+  thực hiện đánh giá năng lực chịu tải của MagicInfo Server trước khi triển khai.
+</div>
+
+<h2 id="architecture">1.2. Kiến Trúc Công Cụ</h2>
+<table>
+  <tr><th>Thành phần</th><th>File</th><th>Mô tả</th></tr>
+  <tr><td><strong>Cấu hình</strong></td><td><code>config/config.js</code></td><td>Tham số server, tài khoản, ngưỡng, kịch bản</td></tr>
+  <tr><td><strong>Thư viện API</strong></td><td><code>lib/device-api.js</code></td><td>Logic gọi API: xác thực, heartbeat, nội dung</td></tr>
+  <tr><td><strong>Kịch bản test</strong></td><td><code>tests/scenarios/screen-simulation.js</code></td><td>Kịch bản chính điều phối luồng màn hình</td></tr>
+  <tr><td><strong>Tạo báo cáo</strong></td><td><code>scripts/generate-report.js</code></td><td>Xuất báo cáo HTML từ dữ liệu JSON của K6</td></tr>
+  <tr><td><strong>Báo cáo đầu ra</strong></td><td><code>reports/</code></td><td>Thư mục chứa JSON + HTML sau mỗi lần chạy</td></tr>
+</table>
+
+<h2 id="simulation">1.3. Kịch Bản Giả Lập</h2>
+<p>Mỗi màn hình ảo (VU — Virtual User) thực hiện đúng vòng lặp của màn hình MagicInfo thực tế:</p>
+
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-body">
+    <div class="step-title">Xác thực — Authentication</div>
+    Màn hình gửi tên đăng nhập &amp; mật khẩu đến server để lấy token API (<code>POST /auth</code>).
+    Token được tái sử dụng trong suốt phiên kiểm thử.
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-body">
+    <div class="step-title">Đăng ký thiết bị — Device Registration</div>
+    Màn hình truy vấn danh sách thiết bị đã đăng ký (<code>GET /rms/devices</code>) để xác nhận
+    kết nối thành công với hệ thống.
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-body">
+    <div class="step-title">Heartbeat định kỳ (mỗi 30 giây)</div>
+    Màn hình gửi tín hiệu "còn sống" (<code>GET /ems/dashboard/devices/status</code>) để server
+    biết thiết bị đang hoạt động bình thường.
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">4</div>
+  <div class="step-body">
+    <div class="step-title">Kiểm tra &amp; tải nội dung (mỗi 5 phút)</div>
+    <p>Màn hình thực hiện 3 bước liên tiếp:</p>
+    <ul>
+      <li>Lấy danh sách playlist được gán (<code>GET /cms/playlists</code>)</li>
+      <li>Lấy chi tiết playlist để biết nội dung bên trong (<code>GET /cms/playlists/{id}</code>)</li>
+      <li>Tải metadata của từng nội dung cần phát (<code>GET /cms/contents/{id}</code>)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHƯƠNG 2: CÀI ĐẶT
+═══════════════════════════════════════════════════════════ -->
+<h1 class="chapter" id="install">2. Cài Đặt và Cấu Hình</h1>
+
+<h2 id="requirements">2.1. Yêu Cầu Hệ Thống</h2>
+<table>
+  <tr><th>Phần mềm</th><th>Phiên bản</th><th>Ghi chú</th></tr>
+  <tr><td><strong>K6</strong></td><td>≥ 0.49</td><td>Công cụ chạy test chính — bắt buộc</td></tr>
+  <tr><td><strong>Node.js</strong></td><td>≥ 18.x</td><td>Dùng để tạo báo cáo HTML — bắt buộc</td></tr>
+  <tr><td><strong>Git</strong></td><td>Bất kỳ</td><td>Tải mã nguồn — tùy chọn</td></tr>
+  <tr><td><strong>RAM</strong></td><td>≥ 4 GB</td><td>Để chạy 200 VU đồng thời</td></tr>
+  <tr><td><strong>Mạng</strong></td><td>LAN/VPN</td><td>Có thể kết nối đến MagicInfo Server</td></tr>
+</table>
+
+<h2 id="setup">2.2. Hướng Dẫn Cài Đặt</h2>
+
+<h3>Bước 1 — Cài đặt K6</h3>
+<p><strong>Windows:</strong></p>
+<pre>winget install k6 --source winget
+# Hoặc tải từ: https://k6.io/docs/get-started/installation/</pre>
+
+<p><strong>Linux (Ubuntu/Debian):</strong></p>
+<pre>sudo gpg -k
+sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+     --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | \
+     sudo tee /etc/apt/sources.list.d/k6.list
+sudo apt-get update && sudo apt-get install k6</pre>
+
+<h3>Bước 2 — Lấy mã nguồn</h3>
+<pre># Clone repository
+git clone &lt;repository-url&gt; magicinfo-performance-tests
+cd magicinfo-performance-tests</pre>
+
+<h3>Bước 3 — Cài đặt Node.js dependencies</h3>
+<pre>npm install</pre>
+
+<h2 id="config">2.3. Cấu Hình Kết Nối</h2>
+
+<div class="box box-warning">
+  <span class="box-icon">⚠️</span>
+  <strong>Quan trọng:</strong> Không lưu mật khẩu trực tiếp vào file cấu hình.
+  Luôn truyền qua biến môi trường hoặc file <code>.env</code> (không commit lên Git).
+</div>
+
+<h3>Tạo file <code>.env</code> từ mẫu</h3>
+<pre>cp .env.example .env</pre>
+
+<p>Chỉnh sửa file <code>.env</code>:</p>
+<pre># URL của MagicInfo Server (thay bằng địa chỉ thực tế)
+MAGICINFO_BASE_URL=http://&lt;địa-chỉ-server&gt;:7001
+
+# Tài khoản quản trị MagicInfo
+MAGICINFO_USERNAME=admin
+MAGICINFO_PASSWORD=&lt;mật-khẩu-của-bạn&gt;
+
+# Số màn hình giả lập (mặc định: 200)
+VIRTUAL_USERS=200</pre>
+
+<h3>Các tham số cấu hình trong <code>config/config.js</code></h3>
+<table>
+  <tr><th>Tham số</th><th>Giá trị mặc định</th><th>Ý nghĩa</th></tr>
+  <tr><td><code>heartbeatInterval</code></td><td>30 giây</td><td>Tần suất màn hình gửi tín hiệu alive</td></tr>
+  <tr><td><code>contentCheckInterval</code></td><td>300 giây</td><td>Tần suất kiểm tra nội dung mới</td></tr>
+  <tr><td><code>httpReqDurationP95</code></td><td>2.000 ms</td><td>Ngưỡng thời gian phản hồi tối đa p(95)</td></tr>
+  <tr><td><code>httpReqFailedRate</code></td><td>5%</td><td>Tỷ lệ lỗi HTTP tối đa cho phép</td></tr>
+  <tr><td><code>timeout</code></td><td>30 giây</td><td>Timeout tối đa cho mỗi request</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHƯƠNG 3: CHẠY KIỂM THỬ
+═══════════════════════════════════════════════════════════ -->
+<h1 class="chapter" id="run">3. Hướng Dẫn Chạy Kiểm Thử</h1>
+
+<h2 id="scenarios">3.1. Các Kịch Bản Kiểm Thử</h2>
+<table>
+  <tr><th>Kịch bản</th><th>Số màn hình</th><th>Thời gian</th><th>Mục đích</th></tr>
+  <tr>
+    <td><span class="badge badge-green">smoke</span></td>
+    <td>5 màn hình</td>
+    <td>~2 phút</td>
+    <td>Kiểm tra nhanh hệ thống có hoạt động không, phát hiện lỗi cơ bản</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-blue">load</span></td>
+    <td>200 màn hình</td>
+    <td>~7 phút</td>
+    <td>Kiểm tra tải tiêu chuẩn — đánh giá hiệu năng trong điều kiện vận hành bình thường</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-yellow">stress</span></td>
+    <td>50 → 250 màn hình</td>
+    <td>~10 phút</td>
+    <td>Tăng dần tải để tìm điểm giới hạn của hệ thống</td>
+  </tr>
+  <tr>
+    <td><span class="badge badge-red">soak</span></td>
+    <td>200 màn hình</td>
+    <td>30 phút</td>
+    <td>Kiểm tra bền vững — phát hiện rò rỉ bộ nhớ và lỗi xuất hiện theo thời gian</td>
+  </tr>
+</table>
+
+<div class="box box-info">
+  <span class="box-icon">💡</span>
+  <strong>Khuyến nghị:</strong> Luôn chạy <strong>smoke</strong> trước để xác nhận kết nối thành công,
+  sau đó mới chạy <strong>load</strong> hoặc <strong>stress</strong>.
+</div>
+
+<h2 id="commands">3.2. Lệnh Chạy</h2>
+
+<h3>Cách 1 — Dùng npm scripts (đơn giản nhất)</h3>
+<pre># Smoke Test (5 màn hình, ~2 phút) — chạy trước để kiểm tra kết nối
+npm run test:smoke -- --env MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;
+
+# Load Test (200 màn hình, ~7 phút) — kiểm tra tải chính
+npm run test:load -- --env MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;
+
+# Stress Test — tìm giới hạn hệ thống
+npm run test:stress -- --env MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;
+
+# Soak Test (30 phút) — kiểm tra bền vững
+npm run test:soak -- --env MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;</pre>
+
+<h3>Cách 2 — Lệnh K6 trực tiếp (tùy chỉnh đầy đủ)</h3>
+<pre>k6 run \
+  --env ENV=load \
+  --env MAGICINFO_BASE_URL=http://&lt;địa-chỉ-server&gt;:7001 \
+  --env MAGICINFO_USERNAME=admin \
+  "--env=MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;" \
+  tests/scenarios/screen-simulation.js</pre>
+
+<div class="box box-warning">
+  <span class="box-icon">⚠️</span>
+  <strong>Lưu ý mật khẩu chứa ký tự đặc biệt (!, @, #...):</strong><br/>
+  Dùng dấu ngoặc kép bao quanh tham số <code>--env</code>:<br/>
+  <code>"--env=MAGICINFO_PASSWORD=Admin1243!"</code>
+</div>
+
+<h2 id="monitor">3.3. Theo Dõi Trong Quá Trình Chạy</h2>
+<p>Trong khi test đang chạy, terminal hiển thị thông tin thời gian thực:</p>
+<pre>running (3m15.0s), 156/200 VUs, 8432 complete and 0 interrupted iterations
+screen_simulation   [  49% ] 156/200 VUs  3m14.9s/6m30.0s
+
+[VU 1] ↓ [[Playlist] Ưu đãi tiết kiệm] Cho vay siêu ưu đãi (LFD, phát 00:01:00, 1.7 kB, 10ms)
+[VU 2] ↓ [[Playlist] Ưu đãi tiết kiệm] Mở thẻ miễn phí thường niên (LFD, phát 00:01:00, 1.5 kB, 8ms)</pre>
+
+<table>
+  <tr><th>Thông tin hiển thị</th><th>Ý nghĩa</th></tr>
+  <tr><td><code>156/200 VUs</code></td><td>Số màn hình đang hoạt động / tổng cộng</td></tr>
+  <tr><td><code>8432 complete iterations</code></td><td>Số vòng lặp đã hoàn thành</td></tr>
+  <tr><td><code>0 interrupted</code></td><td>Không có màn hình nào bị gián đoạn</td></tr>
+  <tr><td><code>↓ [Playlist] Tên nội dung</code></td><td>Màn hình đang tải metadata nội dung từ playlist được gán</td></tr>
+  <tr><td><code>1.7 kB, 10ms</code></td><td>Kích thước metadata và thời gian phản hồi</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHƯƠNG 4: XEM BÁO CÁO
+═══════════════════════════════════════════════════════════ -->
+<h1 class="chapter" id="report">4. Hướng Dẫn Xem Báo Cáo</h1>
+
+<h2 id="gen-report">4.1. Tạo Báo Cáo HTML</h2>
+<p>Sau khi test hoàn thành, file JSON kết quả được lưu tự động trong thư mục <code>reports/</code>.
+Chạy lệnh sau để tạo báo cáo HTML trực quan:</p>
+
+<pre># Tạo báo cáo từ file JSON mới nhất
+node scripts/generate-report.js
+
+# Hoặc dùng npm script
+npm run report
+
+# Chỉ định file cụ thể
+node scripts/generate-report.js reports/summary-load-2026-05-22T03-57-15.json</pre>
+
+<p>File HTML sẽ được tạo cùng tên với file JSON, ví dụ:<br/>
+<code>reports/summary-load-2026-05-22T03-57-15.html</code></p>
+
+<div class="box box-success">
+  <span class="box-icon">✅</span>
+  Mở file HTML bằng bất kỳ trình duyệt nào (Chrome, Edge, Firefox).
+  Báo cáo không cần kết nối Internet (ngoại trừ biểu đồ Chart.js).
+</div>
+
+<h2 id="read-report">4.2. Đọc và Phân Tích Báo Cáo</h2>
+<p>Báo cáo HTML gồm 4 phần chính:</p>
+
+<h3>① Phần Tiêu Đề (Header)</h3>
+<p>Hiển thị tổng quan nhanh:</p>
+<ul>
+  <li><strong>Tên kịch bản</strong>: Smoke / Load / Stress / Soak</li>
+  <li><strong>Thời điểm</strong>: Khi nào test được thực hiện</li>
+  <li><strong>Kết quả tổng</strong>: <span style="color:#16a34a;font-weight:bold">✓ TẤT CẢ NGƯỠNG ĐẠT</span>
+    hoặc <span style="color:#dc2626;font-weight:bold">✗ MỘT SỐ NGƯỠNG KHÔNG ĐẠT</span></li>
+</ul>
+
+<h3>② Thẻ KPI Chính (KPI Cards)</h3>
+<table>
+  <tr><th>Thẻ</th><th>Ý nghĩa</th><th>Giá trị tốt</th></tr>
+  <tr><td>Tỷ lệ lỗi HTTP</td><td>% request bị lỗi HTTP</td><td style="color:#16a34a">0.00% ✅</td></tr>
+  <tr><td>Khả dụng API</td><td>% request server phản hồi (không timeout/500)</td><td style="color:#16a34a">100.00% ✅</td></tr>
+  <tr><td>Thời gian HTTP p(95)</td><td>95% request hoàn thành trong thời gian này</td><td style="color:#16a34a">&lt; 2.000ms ✅</td></tr>
+  <tr><td>Xác thực p(95)</td><td>95% lần đăng nhập hoàn thành trong thời gian này</td><td style="color:#16a34a">&lt; 1.000ms ✅</td></tr>
+  <tr><td>Heartbeat p(95)</td><td>95% tín hiệu heartbeat phản hồi trong thời gian này</td><td style="color:#16a34a">&lt; 2.000ms ✅</td></tr>
+  <tr><td>Tổng số yêu cầu</td><td>Tổng HTTP request trong toàn bộ test</td><td>Càng cao càng chứng tỏ tải lớn</td></tr>
+</table>
+
+<h3>③ Bảng Kiểm Tra Ngưỡng (Thresholds)</h3>
+<p>Mỗi dòng là một tiêu chí đánh giá. Hiển thị:</p>
+<ul>
+  <li><span class="badge badge-green">ĐẠT</span> — xanh: hệ thống đáp ứng yêu cầu</li>
+  <li><span class="badge badge-red">KHÔNG ĐẠT</span> — đỏ: hệ thống không đáp ứng, cần điều tra</li>
+</ul>
+
+<h3>④ Biểu Đồ Phân Tích</h3>
+<ul>
+  <li><strong>Biểu đồ cột</strong>: So sánh thời gian phản hồi (p50 / p95 / max) theo loại hoạt động</li>
+  <li><strong>Biểu đồ tròn</strong>: Phân bố số lượng request theo loại (xác thực, heartbeat, nội dung...)</li>
+</ul>
+
+<h3>⑤ Bộ Đếm Hoạt Động (Counters)</h3>
+<table>
+  <tr><th>Chỉ số</th><th>Ý nghĩa</th></tr>
+  <tr><td>Xác thực thành công</td><td>Số lần lấy token thành công (= số màn hình đã kết nối)</td></tr>
+  <tr><td>Heartbeat thành công</td><td>Tổng tín hiệu alive gửi thành công trong toàn bộ test</td></tr>
+  <tr><td>Lấy lịch nội dung OK</td><td>Số lần màn hình lấy được playlist được gán</td></tr>
+  <tr><td>Tải file thành công</td><td>Số lần màn hình tải metadata nội dung thành công</td></tr>
+  <tr><td>Đăng ký thiết bị OK</td><td>Số lần truy vấn danh sách thiết bị thành công</td></tr>
+</table>
+
+<h2 id="thresholds">4.3. Giải Thích Các Ngưỡng</h2>
+<table>
+  <tr><th>Ngưỡng</th><th>Điều kiện ĐẠT</th><th>Ý nghĩa</th></tr>
+  <tr><td>http_req_duration p(95)</td><td>&lt; 2.000ms</td><td>95% request phản hồi dưới 2 giây</td></tr>
+  <tr><td>http_req_duration p(99)</td><td>&lt; 5.000ms</td><td>99% request phản hồi dưới 5 giây</td></tr>
+  <tr><td>http_req_failed</td><td>&lt; 5%</td><td>Tỷ lệ lỗi HTTP (4xx, 5xx, timeout) dưới 5%</td></tr>
+  <tr><td>magicinfo_auth_duration p(95)</td><td>&lt; 1.000ms</td><td>Xác thực phản hồi dưới 1 giây</td></tr>
+  <tr><td>magicinfo_heartbeat_duration p(95)</td><td>&lt; 2.000ms</td><td>Heartbeat phản hồi dưới 2 giây</td></tr>
+  <tr><td>magicinfo_schedule_check_duration p(95)</td><td>&lt; 3.000ms</td><td>Lấy playlist phản hồi dưới 3 giây</td></tr>
+  <tr><td>magicinfo_content_download_duration p(95)</td><td>&lt; 10.000ms</td><td>Tải metadata nội dung dưới 10 giây</td></tr>
+  <tr><td>magicinfo_content_check_duration p(95)</td><td>&lt; 3.000ms</td><td>Kiểm tra nội dung tổng dưới 3 giây</td></tr>
+  <tr><td>magicinfo_device_reg_duration p(95)</td><td>&lt; 3.000ms</td><td>Đăng ký thiết bị dưới 3 giây</td></tr>
+  <tr><td>magicinfo_api_availability</td><td>&gt; 95%</td><td>API khả dụng ít nhất 95% thời gian</td></tr>
+</table>
+
+<h2 id="metrics">4.4. Bảng Giải Thích Chỉ Số Thống Kê</h2>
+<table>
+  <tr><th>Chỉ số</th><th>Ký hiệu</th><th>Ý nghĩa</th></tr>
+  <tr><td>Trung bình</td><td><code>avg</code></td><td>Giá trị trung bình toàn bộ test — dễ bị kéo lệch bởi spike</td></tr>
+  <tr><td>Trung vị</td><td><code>p(50)</code></td><td>50% request hoàn thành dưới giá trị này — đại diện trải nghiệm điển hình</td></tr>
+  <tr><td>Phân vị 90</td><td><code>p(90)</code></td><td>90% request hoàn thành dưới giá trị này</td></tr>
+  <tr><td>Phân vị 95</td><td><code>p(95)</code></td><td><strong>Chỉ số chính để đánh giá</strong> — đa số người dùng trải nghiệm dưới mức này</td></tr>
+  <tr><td>Phân vị 99</td><td><code>p(99)</code></td><td>99% request hoàn thành dưới giá trị này — phát hiện trường hợp ngoại lai</td></tr>
+  <tr><td>Tối đa</td><td><code>max</code></td><td>Giá trị lớn nhất ghi nhận — thường là spike bất thường</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHƯƠNG 5: PHÂN TÍCH KẾT QUẢ
+═══════════════════════════════════════════════════════════ -->
+<h1 class="chapter" id="interpret">5. Phân Tích và Đánh Giá Kết Quả</h1>
+
+<h2 id="pass-fail">5.1. Tiêu Chí Đánh Giá</h2>
+
+<div class="box box-success">
+  <span class="box-icon">✅</span>
+  <strong>Hệ thống ĐẠT yêu cầu</strong> khi tất cả 10 ngưỡng đều PASS, tỷ lệ lỗi HTTP = 0.00%,
+  và API Availability = 100%.
+</div>
+
+<div class="box box-warning">
+  <span class="box-icon">⚠️</span>
+  <strong>Cần điều tra</strong> khi p(95) của bất kỳ chỉ số nào vượt quá 80% ngưỡng cho phép.
+  Ví dụ: HTTP p(95) = 1.800ms (gần ngưỡng 2.000ms) cần theo dõi thêm.
+</div>
+
+<div class="box box-danger">
+  <span class="box-icon">❌</span>
+  <strong>Hệ thống KHÔNG ĐẠT</strong> khi có bất kỳ ngưỡng nào FAIL. Cần kiểm tra
+  tài nguyên server (CPU, RAM, kết nối DB) và cấu hình hệ thống.
+</div>
+
+<h3>Kết quả tham chiếu — Load Test 200 màn hình</h3>
+<table>
+  <tr><th>Chỉ số</th><th>Kết quả đạt được</th><th>Đánh giá</th></tr>
+  <tr><td>HTTP Failed</td><td>0.00%</td><td style="color:#16a34a">✅ Xuất sắc</td></tr>
+  <tr><td>API Availability</td><td>100.00%</td><td style="color:#16a34a">✅ Xuất sắc</td></tr>
+  <tr><td>HTTP p(95)</td><td>10.1 ms</td><td style="color:#16a34a">✅ Rất tốt</td></tr>
+  <tr><td>Xác thực p(95)</td><td>102 ms</td><td style="color:#16a34a">✅ Tốt</td></tr>
+  <tr><td>Heartbeat p(95)</td><td>5 ms</td><td style="color:#16a34a">✅ Xuất sắc</td></tr>
+  <tr><td>Lịch nội dung p(95)</td><td>22 ms</td><td style="color:#16a34a">✅ Xuất sắc</td></tr>
+  <tr><td>Heartbeat thành công</td><td>13.713 / 13.713</td><td style="color:#16a34a">✅ 100%</td></tr>
+  <tr><td>Tổng yêu cầu HTTP</td><td>22.680</td><td style="color:#16a34a">✅ Hoạt động ổn định</td></tr>
+</table>
+
+<h2 id="troubleshoot">5.2. Xử Lý Sự Cố Thường Gặp</h2>
+<table>
+  <tr><th>Triệu chứng</th><th>Nguyên nhân có thể</th><th>Giải pháp</th></tr>
+  <tr>
+    <td>Không kết nối được server</td>
+    <td>URL sai, firewall, server chưa khởi động</td>
+    <td>Kiểm tra <code>MAGICINFO_BASE_URL</code>, ping server, mở port 7001</td>
+  </tr>
+  <tr>
+    <td>Xác thực thất bại (401)</td>
+    <td>Sai tên đăng nhập / mật khẩu</td>
+    <td>Xác nhận tài khoản admin trên MagicInfo Management Console</td>
+  </tr>
+  <tr>
+    <td>HTTP Failed &gt; 5%</td>
+    <td>Server quá tải, DB bottleneck, OOM</td>
+    <td>Kiểm tra CPU/RAM server, tăng heap size JVM, scale out</td>
+  </tr>
+  <tr>
+    <td>p(95) vượt ngưỡng</td>
+    <td>Network latency cao, server chậm</td>
+    <td>Đo độ trễ mạng, kiểm tra tài nguyên server trong quá trình test</td>
+  </tr>
+  <tr>
+    <td>Lỗi mật khẩu ký tự đặc biệt</td>
+    <td>Shell không escape ký tự !, @...</td>
+    <td>Dùng <code>"--env=MAGICINFO_PASSWORD=..."</code> (ngoặc kép bao ngoài)</td>
+  </tr>
+  <tr>
+    <td>Tải nội dung = 0</td>
+    <td>Chưa có playlist nào được tạo trong CMS</td>
+    <td>Tạo playlist và gán nội dung trong MagicInfo CMS trước khi chạy test</td>
+  </tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHƯƠNG 6: API ĐƯỢC KIỂM THỬ
+═══════════════════════════════════════════════════════════ -->
+<h1 class="chapter" id="api">6. Tham Chiếu API Được Kiểm Thử</h1>
+<p>Các API REST của MagicInfo Server được công cụ gọi:</p>
+<table>
+  <tr><th>API</th><th>Phương thức</th><th>Chức năng</th></tr>
+  <tr><td><code>/restapi/v2.0/auth</code></td><td>POST</td><td>Xác thực, lấy API token</td></tr>
+  <tr><td><code>/restapi/v2.0/rms/devices</code></td><td>GET</td><td>Lấy danh sách thiết bị đã đăng ký</td></tr>
+  <tr><td><code>/restapi/v2.0/ems/dashboard/devices/status</code></td><td>GET</td><td>Heartbeat — trạng thái thiết bị</td></tr>
+  <tr><td><code>/restapi/v2.0/cms/playlists</code></td><td>GET</td><td>Lấy danh sách playlist được gán cho màn hình</td></tr>
+  <tr><td><code>/restapi/v2.0/cms/playlists/{playlistId}</code></td><td>GET</td><td>Chi tiết playlist (bao gồm danh sách nội dung)</td></tr>
+  <tr><td><code>/restapi/v2.0/cms/contents/{contentId}</code></td><td>GET</td><td>Metadata chi tiết của nội dung cần phát</td></tr>
+</table>
+
+<div class="box box-info">
+  <span class="box-icon">ℹ️</span>
+  Tất cả API yêu cầu header <code>api_key: &lt;token&gt;</code> (JWT token lấy từ endpoint <code>/auth</code>).
+  Token có hiệu lực 30 phút và được tự động làm mới trong quá trình test.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHƯƠNG 7: PHỤ LỤC
+═══════════════════════════════════════════════════════════ -->
+<h1 class="chapter" id="appendix">7. Phụ Lục</h1>
+
+<h2>7.1. Cấu Trúc Thư Mục Dự Án</h2>
+<pre>magicinfo-performance-tests/
+├── config/
+│   └── config.js                      # Cấu hình trung tâm
+├── lib/
+│   └── device-api.js                  # Thư viện gọi API MagicInfo
+├── tests/
+│   └── scenarios/
+│       └── screen-simulation.js       # Kịch bản kiểm thử chính
+├── scripts/
+│   ├── generate-report.js             # Tạo báo cáo HTML
+│   └── generate-doc.js                # Tạo tài liệu này
+├── reports/                           # Kết quả test (JSON + HTML)
+├── docs/                              # Tài liệu
+├── .env                               # Cấu hình cục bộ (KHÔNG commit Git)
+├── .env.example                       # Mẫu cấu hình
+└── package.json                       # NPM scripts</pre>
+
+<h2>7.2. Danh Sách Lệnh Thường Dùng</h2>
+<table>
+  <tr><th>Lệnh</th><th>Tác dụng</th></tr>
+  <tr><td><code>npm run test:smoke</code></td><td>Chạy Smoke Test (5 màn hình, 2 phút)</td></tr>
+  <tr><td><code>npm run test:load</code></td><td>Chạy Load Test (200 màn hình, 7 phút)</td></tr>
+  <tr><td><code>npm run test:stress</code></td><td>Chạy Stress Test (50→250 màn hình, 10 phút)</td></tr>
+  <tr><td><code>npm run test:soak</code></td><td>Chạy Soak Test (200 màn hình, 30 phút)</td></tr>
+  <tr><td><code>npm run report</code></td><td>Tạo báo cáo HTML từ JSON mới nhất</td></tr>
+  <tr><td><code>node scripts/generate-doc.js</code></td><td>Tạo lại tài liệu hướng dẫn này</td></tr>
+</table>
+
+<h2>7.3. Ký Hiệu và Viết Tắt</h2>
+<table>
+  <tr><th>Viết tắt</th><th>Ý nghĩa</th></tr>
+  <tr><td>VU</td><td>Virtual User — Người dùng ảo (= màn hình giả lập)</td></tr>
+  <tr><td>p(95)</td><td>Percentile 95 — Phân vị thứ 95</td></tr>
+  <tr><td>CMS</td><td>Content Management System — Hệ thống quản lý nội dung</td></tr>
+  <tr><td>RMS</td><td>Remote Management System — Hệ thống quản lý từ xa</td></tr>
+  <tr><td>LFD</td><td>Large Format Display — Màn hình cỡ lớn Samsung</td></tr>
+  <tr><td>API</td><td>Application Programming Interface</td></tr>
+  <tr><td>JWT</td><td>JSON Web Token — Token xác thực</td></tr>
+</table>
+
+<h2>7.4. Phiếu Bàn Giao</h2>
+<div class="signature-grid">
+  <div class="signature-box">
+    <div class="signature-title">Bên Bàn Giao</div>
+    <div class="signature-line">
+      Họ tên: ___________________________<br/>
+      Chức vụ: __________________________<br/>
+      Ngày: _____________________________<br/>
+      Chữ ký: ___________________________
+    </div>
+  </div>
+  <div class="signature-box">
+    <div class="signature-title">Bên Nhận Bàn Giao</div>
+    <div class="signature-line">
+      Họ tên: ___________________________<br/>
+      Chức vụ: __________________________<br/>
+      Ngày: _____________________________<br/>
+      Chữ ký: ___________________________
+    </div>
+  </div>
+</div>
+
+<br/><br/>
+<div style="text-align:center;color:#6b7280;font-size:10pt;border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px">
+  <strong>MagicInfo Performance Test Suite</strong> — Phiên bản 1.0.0<br/>
+  Tài liệu được tạo tự động ngày 22/05/2026
+</div>
+
+</body>
+</html>
