@@ -1,23 +1,19 @@
-﻿{
-    "name":  "magicinfo-performance-tests",
-    "version":  "1.0.0",
-    "description":  "K6 performance tests simulating 200 screens connecting to MagicInfo Server",
-    "scripts":  {
-                    "test:smoke":  "k6 run --env ENV=smoke  --env MAGICINFO_BASE_URL=http://localhost:7001 --env MAGICINFO_USERNAME=admin tests/scenarios/screen-simulation.js",
-                    "test:load":  "k6 run --env ENV=load   --env MAGICINFO_BASE_URL=http://localhost:7001 --env MAGICINFO_USERNAME=admin tests/scenarios/screen-simulation.js",
-                    "test:stress":  "k6 run --env ENV=stress --env MAGICINFO_BASE_URL=http://localhost:7001 --env MAGICINFO_USERNAME=admin tests/scenarios/screen-simulation.js",
-                    "test:soak":  "k6 run --env ENV=soak   --env MAGICINFO_BASE_URL=http://localhost:7001 --env MAGICINFO_USERNAME=admin tests/scenarios/screen-simulation.js",
-                    "report":  "node scripts/generate-report.js"
-                },
-    "devDependencies":  {
-
-                        },
-    "keywords":  [
-                     "k6",
-                     "performance",
-                     "magicinfo",
-                     "load-testing"
-                 ],
-    "author":  "",
-    "license":  "MIT"
+{
+    "name": "magicinfo-performance-tests",
+    "version": "1.0.0",
+    "description": "K6 performance tests simulating 200 screens connecting to MagicInfo Server",
+    "scripts": {
+        "test:smoke": "k6 run --env ENV=smoke      --env MAGICINFO_BASE_URL=http://localhost:7001 --env MAGICINFO_USERNAME=admin tests/scenarios/admin-user-simulation.js",
+        "test:enterprise": "k6 run --env ENV=enterprise --env MAGICINFO_BASE_URL=http://localhost:7001 --env MAGICINFO_USERNAME=admin tests/scenarios/admin-user-simulation.js",
+        "report": "node scripts/generate-report.js",
+        "doc": "node scripts/generate-doc.js"
+    },
+    "keywords": [
+        "k6",
+        "performance",
+        "magicinfo",
+        "load-testing"
+    ],
+    "author": "",
+    "license": "MIT"
 }

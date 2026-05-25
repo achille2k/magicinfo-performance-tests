@@ -336,45 +336,81 @@ const html = `<!DOCTYPE html>
 </table>
 
 <h2 id="simulation">1.3. Kịch Bản Giả Lập</h2>
-<p>Mỗi màn hình ảo (VU — Virtual User) thực hiện đúng vòng lặp của màn hình MagicInfo thực tế:</p>
+<p>Bộ công cụ giả lập hai nhóm đối tượng chạy song song, mô phỏng hoạt động thực tế trên MagicInfo Server:</p>
+
+<h3>1.3.1. Kịch bản Màn hình giả lập (Screen Simulation)</h3>
+<p>Mỗi màn hình ảo (VU — Virtual User) thực hiện đúng vòng đời hoạt động của màn hình vật lý thực tế:</p>
 
 <div class="step">
   <div class="step-num">1</div>
   <div class="step-body">
     <div class="step-title">Xác thực — Authentication</div>
     Màn hình gửi tên đăng nhập &amp; mật khẩu đến server để lấy token API (<code>POST /auth</code>).
-    Token được tái sử dụng trong suốt phiên kiểm thử.
+    Token được lưu trữ và tái sử dụng, định kỳ làm mới sau mỗi 30 phút để tối ưu hóa hiệu năng.
   </div>
 </div>
 
 <div class="step">
   <div class="step-num">2</div>
   <div class="step-body">
-    <div class="step-title">Đăng ký thiết bị — Device Registration</div>
-    Màn hình truy vấn danh sách thiết bị đã đăng ký (<code>GET /rms/devices</code>) để xác nhận
-    kết nối thành công với hệ thống.
+    <div class="step-title">Heartbeat định kỳ (mỗi 30 giây)</div>
+    Màn hình gửi tín hiệu "còn sống" (<code>GET /ems/dashboard/devices/status</code>) để báo cáo trạng thái trực tuyến cho server.
   </div>
 </div>
 
 <div class="step">
   <div class="step-num">3</div>
   <div class="step-body">
-    <div class="step-title">Heartbeat định kỳ (mỗi 30 giây)</div>
-    Màn hình gửi tín hiệu "còn sống" (<code>GET /ems/dashboard/devices/status</code>) để server
-    biết thiết bị đang hoạt động bình thường.
+    <div class="step-title">Kiểm tra &amp; tải nội dung (mỗi 5 phút)</div>
+    <p>Màn hình thực hiện luồng 3 bước liên tục:</p>
+    <ul>
+      <li>Lấy danh sách playlist được gán (<code>GET /cms/playlists</code>)</li>
+      <li>Lấy chi tiết playlist để phân tích danh sách content bên trong (<code>GET /cms/playlists/{id}</code>)</li>
+      <li>Tải metadata chi tiết của nội dung cần trình chiếu (<code>GET /cms/contents/{id}</code>)</li>
+    </ul>
+  </div>
+</div>
+
+<h3>1.3.2. Kịch bản Người dùng Quản trị (Admin User Simulation)</h3>
+<p>Giả lập các thao tác của Quản trị viên hệ thống thông qua giao diện điều khiển MagicInfo Web Console. Mỗi quản trị viên thực hiện một phiên làm việc (Session) hoàn chỉnh duy nhất rồi thoát (không lặp lại dồn dập):</p>
+
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-body">
+    <div class="step-title">Đăng nhập hệ thống — Admin Login</div>
+    Gửi thông tin tài khoản admin (<code>POST /auth</code>) để khởi tạo phiên quản trị và nhận API key.
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-body">
+    <div class="step-title">Xem danh sách thiết bị — Device List</div>
+    Truy vấn và giám sát danh sách toàn bộ các màn hình hiển thị trong hệ thống (<code>GET /rms/devices</code>).
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-body">
+    <div class="step-title">Xem Dashboard trạng thái — Dashboard View</div>
+    Xem biểu đồ, thống kê số lượng thiết bị online/offline và các cảnh báo hệ thống (<code>GET /ems/dashboard/devices/status</code>).
   </div>
 </div>
 
 <div class="step">
   <div class="step-num">4</div>
   <div class="step-body">
-    <div class="step-title">Kiểm tra &amp; tải nội dung (mỗi 5 phút)</div>
-    <p>Màn hình thực hiện 3 bước liên tiếp:</p>
-    <ul>
-      <li>Lấy danh sách playlist được gán (<code>GET /cms/playlists</code>)</li>
-      <li>Lấy chi tiết playlist để biết nội dung bên trong (<code>GET /cms/playlists/{id}</code>)</li>
-      <li>Tải metadata của từng nội dung cần phát (<code>GET /cms/contents/{id}</code>)</li>
-    </ul>
+    <div class="step-title">Duyệt thư viện nội dung — Content Catalog</div>
+    Duyệt danh mục tệp tin hình ảnh/video trong hệ thống CMS (<code>GET /cms/contents</code>) và xem chi tiết ngẫu nhiên một nội dung (<code>GET /cms/contents/{id}</code>).
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">5</div>
+  <div class="step-body">
+    <div class="step-title">Xem danh sách Playlist — Playlist Catalog</div>
+    Duyệt danh sách các playlist truyền thông (<code>GET /cms/playlists</code>) và xem chi tiết kết cấu phân bổ luồng của playlist (<code>GET /cms/playlists/{id}</code>).
   </div>
 </div>
 
@@ -453,32 +489,17 @@ VIRTUAL_USERS=200</pre>
 ═══════════════════════════════════════════════════════════ -->
 <h1 class="chapter" id="run">3. Hướng Dẫn Chạy Kiểm Thử</h1>
 
-<h2 id="scenarios">3.1. Các Kịch Bản Kiểm Thử</h2>
 <table>
-  <tr><th>Kịch bản</th><th>Số màn hình</th><th>Thời gian</th><th>Mục đích</th></tr>
+  <tr><th>Kịch bản</th><th>Số màn hình</th><th>Quản trị viên</th><th>Thời gian</th><th>Mục đích</th></tr>
   <tr>
     <td><span class="badge badge-green">smoke</span></td>
-    <td>5 màn hình</td>
-    <td>~2 phút</td>
-    <td>Kiểm tra nhanh hệ thống có hoạt động không, phát hiện lỗi cơ bản</td>
+    <td>200</td><td><strong>5</strong></td><td>~7 phút</td>
+    <td>Kiểm tra nhanh hệ thống — xác nhận kết nối, đăng nhập và toàn bộ luồng màn hình + quản trị viên hoạt động đúng</td>
   </tr>
   <tr>
-    <td><span class="badge badge-blue">load</span></td>
-    <td>200 màn hình</td>
-    <td>~7 phút</td>
-    <td>Kiểm tra tải tiêu chuẩn — đánh giá hiệu năng trong điều kiện vận hành bình thường</td>
-  </tr>
-  <tr>
-    <td><span class="badge badge-yellow">stress</span></td>
-    <td>50 → 250 màn hình</td>
-    <td>~10 phút</td>
-    <td>Tăng dần tải để tìm điểm giới hạn của hệ thống</td>
-  </tr>
-  <tr>
-    <td><span class="badge badge-red">soak</span></td>
-    <td>200 màn hình</td>
-    <td>30 phút</td>
-    <td>Kiểm tra bền vững — phát hiện rò rỉ bộ nhớ và lỗi xuất hiện theo thời gian</td>
+    <td><span class="badge" style="background:#fdf4ff;color:#7e22ce">enterprise</span></td>
+    <td><strong>1.200</strong></td><td><strong>20</strong></td><td>~14 phút</td>
+    <td>Kiểm tra quy mô thực tế — đánh giá khả năng chịu tải cực đại khi triển khai toàn hệ thống</td>
   </tr>
 </table>
 
@@ -491,25 +512,28 @@ VIRTUAL_USERS=200</pre>
 <h2 id="commands">3.2. Lệnh Chạy</h2>
 
 <h3>Cách 1 — Dùng npm scripts (đơn giản nhất)</h3>
-<pre># Smoke Test (5 màn hình, ~2 phút) — chạy trước để kiểm tra kết nối
-npm run test:smoke -- --env MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;
+<pre># Smoke Test (200 màn hình + 5 quản trị viên, ~7 phút) — chạy trước để kiểm tra kết nối
+npm run test:smoke -- "--env=MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;"
 
-# Load Test (200 màn hình, ~7 phút) — kiểm tra tải chính
-npm run test:load -- --env MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;
-
-# Stress Test — tìm giới hạn hệ thống
-npm run test:stress -- --env MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;
-
-# Soak Test (30 phút) — kiểm tra bền vững
-npm run test:soak -- --env MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;</pre>
+# Enterprise Test (1.200 màn hình + 20 quản trị viên, ~14 phút) — kiểm tra quy mô thực tế
+npm run test:enterprise -- "--env=MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;"</pre>
 
 <h3>Cách 2 — Lệnh K6 trực tiếp (tùy chỉnh đầy đủ)</h3>
-<pre>k6 run \\
-  --env ENV=load \\
+<pre># Smoke Test
+k6 run \\
+  --env ENV=smoke \\
   --env MAGICINFO_BASE_URL=http://&lt;địa-chỉ-server&gt;:7001 \\
   --env MAGICINFO_USERNAME=admin \\
   "--env=MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;" \\
-  tests/scenarios/screen-simulation.js</pre>
+  tests/scenarios/admin-user-simulation.js
+
+# Enterprise Test
+k6 run \\
+  --env ENV=enterprise \\
+  --env MAGICINFO_BASE_URL=http://&lt;địa-chỉ-server&gt;:7001 \\
+  --env MAGICINFO_USERNAME=admin \\
+  "--env=MAGICINFO_PASSWORD=&lt;mật-khẩu&gt;" \\
+  tests/scenarios/admin-user-simulation.js</pre>
 
 <div class="box box-warning">
   <span class="box-icon">⚠️</span>
@@ -605,7 +629,6 @@ node scripts/generate-report.js reports/summary-load-2026-05-22T03-57-15.json</p
   <tr><td>Heartbeat thành công</td><td>Tổng tín hiệu alive gửi thành công trong toàn bộ test</td></tr>
   <tr><td>Lấy lịch nội dung OK</td><td>Số lần màn hình lấy được playlist được gán</td></tr>
   <tr><td>Tải file thành công</td><td>Số lần màn hình tải metadata nội dung thành công</td></tr>
-  <tr><td>Đăng ký thiết bị OK</td><td>Số lần truy vấn danh sách thiết bị thành công</td></tr>
 </table>
 
 <h2 id="thresholds">4.3. Giải Thích Các Ngưỡng</h2>
@@ -619,7 +642,6 @@ node scripts/generate-report.js reports/summary-load-2026-05-22T03-57-15.json</p
   <tr><td>magicinfo_schedule_check_duration p(95)</td><td>&lt; 3.000ms</td><td>Lấy playlist phản hồi dưới 3 giây</td></tr>
   <tr><td>magicinfo_content_download_duration p(95)</td><td>&lt; 10.000ms</td><td>Tải metadata nội dung dưới 10 giây</td></tr>
   <tr><td>magicinfo_content_check_duration p(95)</td><td>&lt; 3.000ms</td><td>Kiểm tra nội dung tổng dưới 3 giây</td></tr>
-  <tr><td>magicinfo_device_reg_duration p(95)</td><td>&lt; 3.000ms</td><td>Đăng ký thiết bị dưới 3 giây</td></tr>
   <tr><td>magicinfo_api_availability</td><td>&gt; 95%</td><td>API khả dụng ít nhất 95% thời gian</td></tr>
 </table>
 
@@ -754,12 +776,10 @@ node scripts/generate-report.js reports/summary-load-2026-05-22T03-57-15.json</p
 <h2>7.2. Danh Sách Lệnh Thường Dùng</h2>
 <table>
   <tr><th>Lệnh</th><th>Tác dụng</th></tr>
-  <tr><td><code>npm run test:smoke</code></td><td>Chạy Smoke Test (5 màn hình, 2 phút)</td></tr>
-  <tr><td><code>npm run test:load</code></td><td>Chạy Load Test (200 màn hình, 7 phút)</td></tr>
-  <tr><td><code>npm run test:stress</code></td><td>Chạy Stress Test (50→250 màn hình, 10 phút)</td></tr>
-  <tr><td><code>npm run test:soak</code></td><td>Chạy Soak Test (200 màn hình, 30 phút)</td></tr>
+  <tr><td><code>npm run test:smoke</code></td><td>Chạy Smoke Test (200 màn hình + 5 quản trị viên, ~7 phút)</td></tr>
+  <tr><td><code>npm run test:enterprise</code></td><td>Chạy Enterprise Test (1.200 màn hình + 20 quản trị viên, ~14 phút)</td></tr>
   <tr><td><code>npm run report</code></td><td>Tạo báo cáo HTML từ JSON mới nhất</td></tr>
-  <tr><td><code>node scripts/generate-doc.js</code></td><td>Tạo lại tài liệu hướng dẫn này</td></tr>
+  <tr><td><code>npm run doc</code></td><td>Tạo lại file tài liệu hướng dẫn này</td></tr>
 </table>
 
 <h2>7.3. Ký Hiệu và Viết Tắt</h2>

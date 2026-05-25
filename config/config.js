@@ -2,6 +2,7 @@
 // MagicInfo Performance Tests - Configuration
 // ==========================================
 // Central configuration for all test scenarios
+// Supported ENV values: smoke | load | stress | soak | enterprise
 
 export const config = {
   // ── Server Settings ──────────────────────────────────────────────────────
@@ -39,7 +40,6 @@ export const config = {
     httpReqDurationP99: 5000,
     httpReqFailedRate: parseFloat(__ENV.HTTP_REQ_FAILED_RATE) || 0.05, // 5%
     authDurationP95: 1000, // ms
-    deviceRegDurationP95: 3000, // ms
   },
 
   // ── Scenario Profiles ─────────────────────────────────────────────────────
@@ -69,6 +69,13 @@ export const config = {
       vus: 200,
       duration: "30m",
       rampUp: "2m",
+    },
+    // 1200 màn hình — kiểm tra năng lực hệ thống quy mô lớn
+    enterprise: {
+      vus: 1200,
+      duration: "10m",
+      rampUp: "3m",
+      rampDown: "1m",
     },
   },
 

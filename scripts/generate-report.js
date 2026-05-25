@@ -17,13 +17,20 @@ if (args[0]) {
   const files = fs
     .readdirSync(reportsDir)
     .filter((f) => f.startsWith("summary-") && f.endsWith(".json"))
-    .sort()
-    .reverse();
+    .map((f) => {
+      const filePath = path.join(reportsDir, f);
+      return {
+        name: f,
+        time: fs.statSync(filePath).mtime.getTime(),
+      };
+    })
+    .sort((a, b) => b.time - a.time);
+
   if (!files.length) {
     console.error("Không tìm thấy file JSON trong reports/. Hãy chạy test trước.");
     process.exit(1);
   }
-  jsonFile = path.join(reportsDir, files[0]);
+  jsonFile = path.join(reportsDir, files[0].name);
 }
 
 console.log("Đang đọc:", jsonFile);
@@ -54,12 +61,17 @@ function thresholds() {
 
 // ─── Tên kịch bản dịch sang tiếng Việt ───────────────────────────────────
 const scenarioMap = {
-  smoke:  "Kiểm Tra Nhanh (Smoke)",
-  load:   "Kiểm Tra Tải (Load) — 200 Màn Hình",
-  stress: "Kiểm Tra Căng Thẳng (Stress)",
-  soak:   "Kiểm Tra Bền Vững (Soak)",
+  smoke:              "Kiểm Tra Nhanh (Smoke)",
+  load:               "Kiểm Tra Tải (Load) — 200 Màn Hình",
+  stress:             "Kiểm Tra Căng Thẳng (Stress)",
+  soak:               "Kiểm Tra Bền Vững (Soak)",
+  enterprise:         "Kiểm Tra Quy Mô Lớn (Enterprise) — 1.200 Màn Hình",
+  mixed:              "Hỗn Hợp — 20 Quản Trị Viên + 200 Màn Hình",
+  "enterprise-mixed": "Hỗn Hợp Enterprise — 20 Quản Trị Viên + 1.200 Màn Hình",
 };
-const scenarioKey  = jsonFile.match(/summary-([^-]+)-/)?.[1] || "load";
+const scenarioKey  = jsonFile.match(/summary-([\w-]+?)-\d{4}/)?.[1] || "load";
+const hasAdmin      = !!data.metrics["admin_login_duration"];
+const isMixed      = hasAdmin || scenarioKey === "mixed" || scenarioKey === "enterprise-mixed";
 const scenarioName = scenarioMap[scenarioKey] || scenarioKey.toUpperCase();
 const finishedAt   = new Date().toLocaleString("vi-VN", {
   dateStyle: "full", timeStyle: "medium",
@@ -72,33 +84,57 @@ const thresh     = thresholds();
 const allPass    = thresh.every((t) => t.ok);
 
 // ─── Dữ liệu biểu đồ ─────────────────────────────────────────────────────
+// Biểu đồ cột — màn hình
 const chartDurations = {
-  labels: ["Xác thực", "Heartbeat", "Kiểm tra nội dung", "Đăng ký thiết bị", "HTTP tổng"],
+  labels: ["Xác thực", "Heartbeat", "Kiểm tra nội dung", "HTTP tổng"],
   p50: [
     (m("magicinfo_auth_duration")?.values?.med           || 0).toFixed(1),
     (m("magicinfo_heartbeat_duration")?.values?.med      || 0).toFixed(1),
     (m("magicinfo_content_check_duration")?.values?.med  || 0).toFixed(1),
-    (m("magicinfo_device_reg_duration")?.values?.med     || 0).toFixed(1),
     (m("http_req_duration")?.values?.med                 || 0).toFixed(1),
   ],
   p95: [
     p95("magicinfo_auth_duration"),
     p95("magicinfo_heartbeat_duration"),
     p95("magicinfo_content_check_duration"),
-    p95("magicinfo_device_reg_duration"),
     p95("http_req_duration"),
   ],
   max: [
     mx("magicinfo_auth_duration"),
     mx("magicinfo_heartbeat_duration"),
     mx("magicinfo_content_check_duration"),
-    mx("magicinfo_device_reg_duration"),
     mx("http_req_duration"),
   ],
 };
 
+// Biểu đồ cột — quản trị viên (chỉ hiện khi mixed)
+const adminChartDurations = {
+  labels: ["Đăng nhập", "DS Thiết bị", "Dashboard", "Thư viện ND", "Playlist"],
+  p50: [
+    (m("admin_login_duration")?.values?.med         || 0).toFixed(1),
+    (m("admin_device_list_duration")?.values?.med   || 0).toFixed(1),
+    (m("admin_dashboard_duration")?.values?.med     || 0).toFixed(1),
+    (m("admin_content_list_duration")?.values?.med  || 0).toFixed(1),
+    (m("admin_playlist_duration")?.values?.med      || 0).toFixed(1),
+  ],
+  p95: [
+    p95("admin_login_duration"),
+    p95("admin_device_list_duration"),
+    p95("admin_dashboard_duration"),
+    p95("admin_content_list_duration"),
+    p95("admin_playlist_duration"),
+  ],
+  max: [
+    mx("admin_login_duration"),
+    mx("admin_device_list_duration"),
+    mx("admin_dashboard_duration"),
+    mx("admin_content_list_duration"),
+    mx("admin_playlist_duration"),
+  ],
+};
+
 const countersData = {
-  labels: ["Xác thực OK", "Xác thực Lỗi", "Heartbeat OK", "Heartbeat Lỗi", "Nội dung OK", "Tải file OK", "Tải file lỗi"],
+  labels: ["Xác thực OK", "Xác thực Lỗi", "Heartbeat OK", "Heartbeat Lỗi", "Nội dung OK", "Tải file OK", "Tải file Lỗi"],
   values: [
     m("magicinfo_auth_success")?.values?.count             || 0,
     m("magicinfo_auth_fail")?.values?.count                || 0,
@@ -110,6 +146,16 @@ const countersData = {
   ],
 };
 
+const adminCountersData = {
+  labels: ["Admin đăng nhập OK", "Trang admin OK", "Admin lỗi", "Trang lỗi"],
+  values: [
+    m("admin_login_success")?.values?.count  || 0,
+    m("admin_page_success")?.values?.count   || 0,
+    m("admin_login_fail")?.values?.count     || 0,
+    m("admin_page_fail")?.values?.count      || 0,
+  ],
+};
+
 // ─── Bảng metrics chi tiết ────────────────────────────────────────────────
 const metricRows = [
   ["http_req_duration",                    "Thời gian HTTP tổng"],
@@ -118,7 +164,6 @@ const metricRows = [
   ["magicinfo_schedule_check_duration",    "Thời gian Lấy lịch phát (CMS)"],
   ["magicinfo_content_download_duration",  "Thời gian Tải file nội dung"],
   ["magicinfo_content_check_duration",     "Thời gian Kiểm tra nội dung"],
-  ["magicinfo_device_reg_duration",        "Thời gian Đăng ký thiết bị"],
 ].map(([key, label]) => {
   const vals = data.metrics[key]?.values || {};
   const fmt  = (v) => (v || 0).toFixed(1);
@@ -146,8 +191,6 @@ const counterCards = [
   ["magicinfo_heartbeat_fail",           "Heartbeat thất bại",         "var(--red)"],
   ["magicinfo_content_check_success",    "Lấy lịch nội dung OK",       "var(--accent)"],
   ["magicinfo_content_download_success", "Tải file thành công",        "var(--yellow)"],
-
-  ["magicinfo_device_reg_success",       "Đăng ký thiết bị OK",       "#a78bfa"],
 ].map(([key, label, color]) => {
   const cnt = count(key);
   if (cnt === 0) return ""; // hide zero count KPI
@@ -160,13 +203,19 @@ const counterCards = [
 
 // ─── Hàng threshold ───────────────────────────────────────────────────────
 const threshNameMap = {
-  "http_req_duration":               "Thời gian HTTP",
-  "http_req_failed":                 "Tỷ lệ lỗi HTTP",
-  "magicinfo_auth_duration":         "Thời gian xác thực",
-  "magicinfo_device_reg_duration":   "Thời gian đăng ký thiết bị",
-  "magicinfo_heartbeat_duration":    "Thời gian heartbeat",
-  "magicinfo_content_check_duration":"Thời gian kiểm tra nội dung",
-  "magicinfo_api_availability":      "Tính khả dụng của API",
+  "http_req_duration":                  "Thời gian HTTP",
+  "http_req_failed":                    "Tỷ lệ lỗi HTTP",
+  "magicinfo_auth_duration":            "Thời gian xác thực màn hình",
+  "magicinfo_heartbeat_duration":       "Thời gian heartbeat màn hình",
+  "magicinfo_content_check_duration":   "Thời gian kiểm tra nội dung",
+  "magicinfo_schedule_check_duration":  "Thời gian lấy playlist",
+  "magicinfo_content_download_duration":"Thời gian tải metadata",
+  "magicinfo_api_availability":         "Tính khả dụng của API",
+  "admin_login_duration":               "Đăng nhập quản trị viên",
+  "admin_device_list_duration":         "Trang danh sách thiết bị",
+  "admin_dashboard_duration":           "Trang dashboard trạng thái",
+  "admin_content_list_duration":        "Trang thư viện nội dung",
+  "admin_playlist_duration":            "Trang danh sách playlist",
 };
 
 const threshRows = thresh.map((t) => `
@@ -178,6 +227,87 @@ const threshRows = thresh.map((t) => `
     </div>
     <div class="thresh-badge ${t.ok ? "pass" : "fail"}">${t.ok ? "ĐẠT" : "KHÔNG ĐẠT"}</div>
   </div>`).join("");
+
+// ─── Block HTML quản trị viên (chỉ render khi isMixed) ───────────────────────────────
+const adminMetricRows = [
+  ["admin_login_duration",        "Đăng nhập"],
+  ["admin_device_list_duration",  "Danh sách thiết bị"],
+  ["admin_dashboard_duration",    "Dashboard trạng thái"],
+  ["admin_content_list_duration", "Thư viện nội dung"],
+  ["admin_playlist_duration",     "Danh sách playlist"],
+].map(([key, label]) => {
+  const vals = data.metrics[key]?.values || {};
+  const fmt  = (v) => (v || 0).toFixed(1);
+  const cls  = (v) => v < 100 ? "good" : v < 500 ? "" : v < 1000 ? "warn" : "bad";
+  return `<tr>
+    <td><div style="font-weight:600;font-size:13px">${label}</div><div class="metric-name">${key}</div></td>
+    <td class="val ${cls(vals.avg||0)}">${fmt(vals.avg)}ms</td>
+    <td class="val">${fmt(vals.med)}ms</td>
+    <td class="val">${fmt(vals["p(90)"])}ms</td>
+    <td class="val ${cls(vals["p(95)"]||0)}">${fmt(vals["p(95)"])}ms</td>
+    <td class="val">${fmt(vals["p(99)"])}ms</td>
+    <td class="val">${fmt(vals.max)}ms</td>
+  </tr>`;
+}).join("");
+
+const adminSection = `
+  <div class="section">
+    <div class="section-title" style="color:#f472b6">&#128100; Qu&#7843;n Tr&#7883; Vi&#234;n &#8212; 20 VUs</div>
+
+    <div class="kpi-grid" style="margin-bottom:28px">
+      <div class="kpi-card" style="--accent-line:#f472b6">
+        <div class="kpi-label">Đăng nhập p(95)</div>
+        <div class="kpi-value" style="color:#f472b6">${p95("admin_login_duration")}<span style="font-size:15px;color:var(--muted)">ms</span></div>
+        <div class="kpi-unit">Ngưỡng &lt; 2.000ms</div>
+      </div>
+      <div class="kpi-card" style="--accent-line:#818cf8">
+        <div class="kpi-label">DS Thiết bị p(95)</div>
+        <div class="kpi-value" style="color:#818cf8">${p95("admin_device_list_duration")}<span style="font-size:15px;color:var(--muted)">ms</span></div>
+        <div class="kpi-unit">Ngưỡng &lt; 3.000ms</div>
+      </div>
+      <div class="kpi-card" style="--accent-line:#34d399">
+        <div class="kpi-label">Dashboard p(95)</div>
+        <div class="kpi-value" style="color:#34d399">${p95("admin_dashboard_duration")}<span style="font-size:15px;color:var(--muted)">ms</span></div>
+        <div class="kpi-unit">Ngưỡng &lt; 2.000ms</div>
+      </div>
+      <div class="kpi-card" style="--accent-line:#fb923c">
+        <div class="kpi-label">Thư viện ND p(95)</div>
+        <div class="kpi-value" style="color:#fb923c">${p95("admin_content_list_duration")}<span style="font-size:15px;color:var(--muted)">ms</span></div>
+        <div class="kpi-unit">Ngưỡng &lt; 3.000ms</div>
+      </div>
+      <div class="kpi-card" style="--accent-line:#a78bfa">
+        <div class="kpi-label">Playlist p(95)</div>
+        <div class="kpi-value" style="color:#a78bfa">${p95("admin_playlist_duration")}<span style="font-size:15px;color:var(--muted)">ms</span></div>
+        <div class="kpi-unit">Ngưỡng &lt; 3.000ms</div>
+      </div>
+      <div class="kpi-card" style="--accent-line:var(--green)">
+        <div class="kpi-label">Trang admin thành công</div>
+        <div class="kpi-value" style="color:var(--green);font-size:28px">${(m("admin_page_success")?.values?.count||0).toLocaleString("vi-VN")}</div>
+        <div class="kpi-unit">${(m("admin_login_success")?.values?.count||0)} admin đăng nhập OK</div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:28px">
+      <table class="metrics-table">
+        <thead><tr>
+          <th>Trang / Chức năng</th>
+          <th>Trung bình</th><th>p(50)</th><th>p(90)</th><th>p(95)</th><th>p(99)</th><th>Tối đa</th>
+        </tr></thead>
+        <tbody>${adminMetricRows}</tbody>
+      </table>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Thời gian phản hồi theo trang — Quản trị viên (ms)</h3>
+        <div class="chart-wrap"><canvas id="adminDurChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Hoạt động quản trị viên</h3>
+        <div class="chart-wrap"><canvas id="adminCountChart"></canvas></div>
+      </div>
+    </div>
+  </div>`;
 
 // ─── HTML template (Tiếng Việt) ───────────────────────────────────────────
 const html = `<!DOCTYPE html>
@@ -275,7 +405,7 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;backgr
     </p>
     <div class="verdict">
       ${allPass
-        ? "✓ TẤT CẢ NGƯỠng ĐẠT — Kiểm thử THÀNH CÔNG"
+        ? "✓ TẤT CẢ NGƯỠNG ĐẠT — Kiểm thử THÀNH CÔNG"
         : "✗ MỘT SỐ NGƯỠNG KHÔNG ĐẠT — Kiểm thử THẤT BẠI"}
     </div>
   </div>
@@ -360,11 +490,13 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;backgr
     </div>
   </div>
 
-  <!-- COUNTERS -->
+  <!-- COUNTERS (Màn hình) -->
   <div class="section">
-    <div class="section-title">Bộ đếm hoạt động</div>
+    <div class="section-title">Bộ đếm hoạt động${isMixed ? " \u2014 Màn Hình" : ""}</div>
     <div class="kpi-grid">${counterCards}</div>
   </div>
+
+  ${isMixed ? adminSection : ""}
 
   <!-- FOOTER -->
   <div class="footer">
@@ -404,7 +536,7 @@ new Chart(countCtx, {
     labels: ${JSON.stringify(countersData.labels)},
     datasets: [{
       data: ${JSON.stringify(countersData.values)},
-      backgroundColor: ["#22c55e","#ef4444","#00d4aa","#f87171","#6c63ff"],
+      backgroundColor: ["#22c55e","#ef4444","#00d4aa","#f87171","#6c63ff","#eab308","#f43f5e"],
       borderWidth: 2, borderColor: "#1a1d27", hoverOffset: 10
     }]
   },
@@ -416,6 +548,48 @@ new Chart(countCtx, {
     cutout: "62%"
   }
 });
+
+${isMixed ? `
+// Biểu đồ admin — thời gian
+const adminDurCtx = document.getElementById("adminDurChart").getContext("2d");
+new Chart(adminDurCtx, {
+  type: "bar",
+  data: {
+    labels: ${JSON.stringify(adminChartDurations.labels)},
+    datasets: [
+      { label: "p(50)",  data: ${JSON.stringify(adminChartDurations.p50)}, backgroundColor: "rgba(244,114,182,.75)", borderRadius: 6 },
+      { label: "p(95)",  data: ${JSON.stringify(adminChartDurations.p95)}, backgroundColor: "rgba(167,139,250,.75)", borderRadius: 6 },
+      { label: "Tối đa", data: ${JSON.stringify(adminChartDurations.max)}, backgroundColor: "rgba(251,146,60,.45)",  borderRadius: 6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: "#94a3b8", font: { size: 11 }, padding: 12 } } },
+    scales: {
+      x: { ticks: { color: "#64748b", font: { size: 10 } }, grid: { color: "rgba(45,48,80,.5)" } },
+      y: { ticks: { color: "#64748b", callback: v => v + "ms" }, grid: { color: "rgba(45,48,80,.5)" } }
+    }
+  }
+});
+// Biểu đồ admin — bộ đếm
+const adminCountCtx = document.getElementById("adminCountChart").getContext("2d");
+new Chart(adminCountCtx, {
+  type: "doughnut",
+  data: {
+    labels: ${JSON.stringify(adminCountersData.labels)},
+    datasets: [{
+      data: ${JSON.stringify(adminCountersData.values)},
+      backgroundColor: ["#f472b6","#22c55e","#ef4444","#f87171"],
+      borderWidth: 2, borderColor: "#1a1d27", hoverOffset: 10
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: "right", labels: { color: "#94a3b8", font: { size: 11 }, padding: 14 } } },
+    cutout: "62%"
+  }
+});
+` : ""}
 <\/script>
 </body>
 </html>`;
@@ -425,3 +599,17 @@ const outHtml = jsonFile.replace(/\.json$/, ".html");
 fs.writeFileSync(outHtml, html, "utf8");
 console.log("\n✅ Báo cáo HTML đã tạo:", outHtml);
 console.log("   Mở trong trình duyệt: file://" + outHtml.replace(/\\/g, "/"));
+
+// Tự động mở file HTML trong trình duyệt mặc định
+try {
+  const { exec } = require("child_process");
+  if (process.platform === "win32") {
+    exec(`start "" "${outHtml}"`);
+  } else if (process.platform === "darwin") {
+    exec(`open "${outHtml}"`);
+  } else {
+    exec(`xdg-open "${outHtml}"`);
+  }
+} catch (err) {
+  // Bỏ qua nếu có lỗi khi mở trình duyệt
+}

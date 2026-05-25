@@ -43,6 +43,7 @@ export default function () {
   const loginRes = http.post(
     getAuthUrl(),
     JSON.stringify({
+      grantType: "password",
       username: config.auth.username,
       password: config.auth.password,
     }),
@@ -84,13 +85,20 @@ export default function () {
   sleep(1);
 
   // ── Test 2: Token Refresh ──────────────────────────────────────────────
-  const refreshRes = http.get(`${getAuthUrl()}/refresh`, {
-    headers: {
-      "Content-Type": "application/json",
-      api_token: token,
-    },
-    tags: { name: "auth_refresh" },
-  });
+  const refreshRes = http.post(
+    getAuthUrl(),
+    JSON.stringify({
+      grantType: "refresh_token",
+      token: token,
+    }),
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      tags: { name: "auth_refresh" },
+    }
+  );
 
   check(refreshRes, {
     "token refresh: status 200": (r) => r.status === 200,

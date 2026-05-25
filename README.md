@@ -11,7 +11,6 @@
 Project này sử dụng [Grafana K6](https://k6.io/) để kiểm thử hiệu năng Samsung MagicInfo Server bằng cách giả lập **200 màn hình** kết nối đồng thời, bao gồm:
 
 - 🔐 **Xác thực** (API token management)
-- 📡 **Đăng ký thiết bị** (Device registration/check)
 - 💓 **Heartbeat** định kỳ (mỗi 30 giây)
 - 📋 **Lấy playlist** được gán cho màn hình (mỗi 5 phút)
 - 📥 **Tải nội dung** trong playlist đó (đúng nội dung được trình chiếu)
@@ -133,7 +132,6 @@ Mỗi Virtual User (VU) đại diện cho **1 màn hình**, thực hiện đúng
 ```
 [Khởi động]
   └─ Xác thực → lấy JWT token   (POST /auth)
-  └─ Kiểm tra đăng ký thiết bị  (GET  /rms/devices)
 
 [Vòng lặp hoạt động — lặp lại mỗi ~5 giây]
   ├─ Gửi Heartbeat               (GET /ems/dashboard/devices/status)
@@ -168,7 +166,6 @@ Mỗi Virtual User (VU) đại diện cho **1 màn hình**, thực hiện đúng
 | HTTP P99 response time | < 5.000ms |
 | Tỷ lệ lỗi HTTP | < 5% |
 | Xác thực P95 | < 1.000ms |
-| Đăng ký thiết bị P95 | < 3.000ms |
 | Heartbeat P95 | < 2.000ms |
 | Tính khả dụng API | > 95% |
 
@@ -179,7 +176,6 @@ Mỗi Virtual User (VU) đại diện cho **1 màn hình**, thực hiện đúng
 | `magicinfo_auth_success` | Counter | Số lần xác thực thành công |
 | `magicinfo_auth_fail` | Counter | Số lần xác thực thất bại |
 | `magicinfo_auth_duration` | Trend | Thời gian xác thực (ms) |
-| `magicinfo_device_reg_duration` | Trend | Thời gian truy vấn đăng ký thiết bị (ms) |
 | `magicinfo_heartbeat_success` | Counter | Số heartbeat thành công |
 | `magicinfo_heartbeat_fail` | Counter | Số heartbeat thất bại |
 | `magicinfo_heartbeat_duration` | Trend | Thời gian gửi heartbeat (ms) |

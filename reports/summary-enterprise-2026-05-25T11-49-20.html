@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<meta name="description" content="Báo cáo kiểm thử hiệu năng MagicInfo Server — Kiểm Tra Nhanh (Smoke)"/>
-<title>Báo cáo Kiểm thử Hiệu năng MagicInfo — Kiểm Tra Nhanh (Smoke)</title>
+<meta name="description" content="Báo cáo kiểm thử hiệu năng MagicInfo Server — Kiểm Tra Quy Mô Lớn (Enterprise) — 1.200 Màn Hình"/>
+<title>Báo cáo Kiểm thử Hiệu năng MagicInfo — Kiểm Tra Quy Mô Lớn (Enterprise) — 1.200 Màn Hình</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -87,12 +87,12 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;backgr
     <div class="badge"><span class="badge-dot"></span>Kiểm thử Hiệu năng MagicInfo</div>
     <h1>Báo Cáo Kiểm Thử Hiệu Năng</h1>
     <p class="subtitle">
-      Kịch bản: <span>Kiểm Tra Nhanh (Smoke)</span><br/>
-      Hoàn thành: <span>lúc 11:22:29 Thứ Sáu, 22 tháng 5, 2026</span> &nbsp;·&nbsp;
+      Kịch bản: <span>Kiểm Tra Quy Mô Lớn (Enterprise) — 1.200 Màn Hình</span><br/>
+      Hoàn thành: <span>lúc 18:50:57 Thứ Hai, 25 tháng 5, 2026</span> &nbsp;·&nbsp;
       Máy chủ: <span>http://localhost:7001</span>
     </p>
     <div class="verdict">
-      ✓ TẤT CẢ NGƯỠng ĐẠT — Kiểm thử THÀNH CÔNG
+      ✓ TẤT CẢ NGƯỠNG ĐẠT — Kiểm thử THÀNH CÔNG
     </div>
   </div>
 </div>
@@ -114,23 +114,23 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;backgr
     </div>
     <div class="kpi-card" style="--accent-line:var(--accent)">
       <div class="kpi-label">Thời gian HTTP p(95)</div>
-      <div class="kpi-value">11.0<span style="font-size:15px;color:var(--muted)">ms</span></div>
+      <div class="kpi-value">8.7<span style="font-size:15px;color:var(--muted)">ms</span></div>
       <div class="kpi-unit">Ngưỡng &lt; 2.000ms</div>
     </div>
     <div class="kpi-card" style="--accent-line:#f472b6">
       <div class="kpi-label">Xác thực p(95)</div>
-      <div class="kpi-value" style="color:#f472b6">89.8<span style="font-size:15px;color:var(--muted)">ms</span></div>
+      <div class="kpi-value" style="color:#f472b6">97.0<span style="font-size:15px;color:var(--muted)">ms</span></div>
       <div class="kpi-unit">Ngưỡng &lt; 1.000ms</div>
     </div>
     <div class="kpi-card" style="--accent-line:var(--yellow)">
       <div class="kpi-label">Heartbeat p(95)</div>
-      <div class="kpi-value" style="color:var(--yellow)">4.8<span style="font-size:15px;color:var(--muted)">ms</span></div>
+      <div class="kpi-value" style="color:var(--yellow)">5.0<span style="font-size:15px;color:var(--muted)">ms</span></div>
       <div class="kpi-unit">Ngưỡng &lt; 2.000ms</div>
     </div>
     <div class="kpi-card" style="--accent-line:var(--muted)">
       <div class="kpi-label">Tổng số yêu cầu</div>
-      <div class="kpi-value">156</div>
-      <div class="kpi-unit">84 vòng lặp</div>
+      <div class="kpi-value">226.177</div>
+      <div class="kpi-unit">141.426 vòng lặp</div>
     </div>
   </div>
 
@@ -141,7 +141,15 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;backgr
   <div class="thresh-row pass">
     <div class="thresh-icon pass">✓</div>
     <div class="thresh-info">
-      <div class="thresh-name">Thời gian xác thực</div>
+      <div class="thresh-name">Đăng nhập quản trị viên</div>
+      <div class="thresh-expr">p(95)<2000</div>
+    </div>
+    <div class="thresh-badge pass">ĐẠT</div>
+  </div>
+  <div class="thresh-row pass">
+    <div class="thresh-icon pass">✓</div>
+    <div class="thresh-info">
+      <div class="thresh-name">Thời gian xác thực màn hình</div>
       <div class="thresh-expr">p(95)<1000</div>
     </div>
     <div class="thresh-badge pass">ĐẠT</div>
@@ -149,7 +157,71 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;backgr
   <div class="thresh-row pass">
     <div class="thresh-icon pass">✓</div>
     <div class="thresh-info">
+      <div class="thresh-name">Thời gian heartbeat màn hình</div>
+      <div class="thresh-expr">p(95)<2000</div>
+    </div>
+    <div class="thresh-badge pass">ĐẠT</div>
+  </div>
+  <div class="thresh-row pass">
+    <div class="thresh-icon pass">✓</div>
+    <div class="thresh-info">
+      <div class="thresh-name">Trang dashboard trạng thái</div>
+      <div class="thresh-expr">p(95)<2000</div>
+    </div>
+    <div class="thresh-badge pass">ĐẠT</div>
+  </div>
+  <div class="thresh-row pass">
+    <div class="thresh-icon pass">✓</div>
+    <div class="thresh-info">
       <div class="thresh-name">Thời gian kiểm tra nội dung</div>
+      <div class="thresh-expr">p(95)<3000</div>
+    </div>
+    <div class="thresh-badge pass">ĐẠT</div>
+  </div>
+  <div class="thresh-row pass">
+    <div class="thresh-icon pass">✓</div>
+    <div class="thresh-info">
+      <div class="thresh-name">Trang danh sách thiết bị</div>
+      <div class="thresh-expr">p(95)<2000</div>
+    </div>
+    <div class="thresh-badge pass">ĐẠT</div>
+  </div>
+  <div class="thresh-row pass">
+    <div class="thresh-icon pass">✓</div>
+    <div class="thresh-info">
+      <div class="thresh-name">Thời gian HTTP</div>
+      <div class="thresh-expr">p(95)<3000</div>
+    </div>
+    <div class="thresh-badge pass">ĐẠT</div>
+  </div>
+  <div class="thresh-row pass">
+    <div class="thresh-icon pass">✓</div>
+    <div class="thresh-info">
+      <div class="thresh-name">Thời gian HTTP</div>
+      <div class="thresh-expr">p(99)<8000</div>
+    </div>
+    <div class="thresh-badge pass">ĐẠT</div>
+  </div>
+  <div class="thresh-row pass">
+    <div class="thresh-icon pass">✓</div>
+    <div class="thresh-info">
+      <div class="thresh-name">Trang danh sách playlist</div>
+      <div class="thresh-expr">p(95)<3000</div>
+    </div>
+    <div class="thresh-badge pass">ĐẠT</div>
+  </div>
+  <div class="thresh-row pass">
+    <div class="thresh-icon pass">✓</div>
+    <div class="thresh-info">
+      <div class="thresh-name">Thời gian tải metadata</div>
+      <div class="thresh-expr">p(95)<10000</div>
+    </div>
+    <div class="thresh-badge pass">ĐẠT</div>
+  </div>
+  <div class="thresh-row pass">
+    <div class="thresh-icon pass">✓</div>
+    <div class="thresh-info">
+      <div class="thresh-name">Trang thư viện nội dung</div>
       <div class="thresh-expr">p(95)<3000</div>
     </div>
     <div class="thresh-badge pass">ĐẠT</div>
@@ -165,23 +237,7 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;backgr
   <div class="thresh-row pass">
     <div class="thresh-icon pass">✓</div>
     <div class="thresh-info">
-      <div class="thresh-name">Thời gian HTTP</div>
-      <div class="thresh-expr">p(95)<2000</div>
-    </div>
-    <div class="thresh-badge pass">ĐẠT</div>
-  </div>
-  <div class="thresh-row pass">
-    <div class="thresh-icon pass">✓</div>
-    <div class="thresh-info">
-      <div class="thresh-name">Thời gian HTTP</div>
-      <div class="thresh-expr">p(99)<5000</div>
-    </div>
-    <div class="thresh-badge pass">ĐẠT</div>
-  </div>
-  <div class="thresh-row pass">
-    <div class="thresh-icon pass">✓</div>
-    <div class="thresh-info">
-      <div class="thresh-name">Thời gian đăng ký thiết bị</div>
+      <div class="thresh-name">Thời gian lấy playlist</div>
       <div class="thresh-expr">p(95)<3000</div>
     </div>
     <div class="thresh-badge pass">ĐẠT</div>
@@ -191,30 +247,6 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;backgr
     <div class="thresh-info">
       <div class="thresh-name">Tỷ lệ lỗi HTTP</div>
       <div class="thresh-expr">rate<0.05</div>
-    </div>
-    <div class="thresh-badge pass">ĐẠT</div>
-  </div>
-  <div class="thresh-row pass">
-    <div class="thresh-icon pass">✓</div>
-    <div class="thresh-info">
-      <div class="thresh-name">Thời gian heartbeat</div>
-      <div class="thresh-expr">p(95)<2000</div>
-    </div>
-    <div class="thresh-badge pass">ĐẠT</div>
-  </div>
-  <div class="thresh-row pass">
-    <div class="thresh-icon pass">✓</div>
-    <div class="thresh-info">
-      <div class="thresh-name">magicinfo_schedule_check_duration</div>
-      <div class="thresh-expr">p(95)<3000</div>
-    </div>
-    <div class="thresh-badge pass">ĐẠT</div>
-  </div>
-  <div class="thresh-row pass">
-    <div class="thresh-icon pass">✓</div>
-    <div class="thresh-info">
-      <div class="thresh-name">magicinfo_content_download_duration</div>
-      <div class="thresh-expr">p(95)<10000</div>
     </div>
     <div class="thresh-badge pass">ĐẠT</div>
   </div></div>
@@ -257,130 +289,209 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;backgr
         <div style="font-weight:600;font-size:13px">Thời gian HTTP tổng</div>
         <div class="metric-name">http_req_duration</div>
       </td>
-      <td class="val good">7.6ms</td>
-      <td class="val">3.8ms</td>
-      <td class="val">8.1ms</td>
-      <td class="val good">11.0ms</td>
+      <td class="val good">4.7ms</td>
+      <td class="val">3.2ms</td>
+      <td class="val">7.5ms</td>
+      <td class="val good">8.7ms</td>
       <td class="val">0.0ms</td>
-      <td class="val">82.1ms</td>
+      <td class="val">450.3ms</td>
     </tr>
     <tr>
       <td>
         <div style="font-weight:600;font-size:13px">Thời gian Xác thực</div>
         <div class="metric-name">magicinfo_auth_duration</div>
       </td>
-      <td class="val good">80.8ms</td>
-      <td class="val">79.0ms</td>
-      <td class="val">86.5ms</td>
-      <td class="val good">89.8ms</td>
+      <td class="val good">81.7ms</td>
+      <td class="val">78.0ms</td>
+      <td class="val">88.0ms</td>
+      <td class="val good">97.0ms</td>
       <td class="val">0.0ms</td>
-      <td class="val">93.0ms</td>
+      <td class="val">452.0ms</td>
     </tr>
     <tr>
       <td>
         <div style="font-weight:600;font-size:13px">Thời gian Heartbeat</div>
         <div class="metric-name">magicinfo_heartbeat_duration</div>
       </td>
-      <td class="val good">3.6ms</td>
+      <td class="val good">3.3ms</td>
+      <td class="val">3.0ms</td>
       <td class="val">4.0ms</td>
-      <td class="val">4.0ms</td>
-      <td class="val good">4.8ms</td>
+      <td class="val good">5.0ms</td>
       <td class="val">0.0ms</td>
-      <td class="val">5.0ms</td>
+      <td class="val">38.0ms</td>
     </tr>
     <tr>
       <td>
         <div style="font-weight:600;font-size:13px">Thời gian Lấy lịch phát (CMS)</div>
         <div class="metric-name">magicinfo_schedule_check_duration</div>
       </td>
-      <td class="val good">3.6ms</td>
+      <td class="val good">3.4ms</td>
       <td class="val">3.0ms</td>
-      <td class="val">5.0ms</td>
-      <td class="val good">5.1ms</td>
+      <td class="val">4.0ms</td>
+      <td class="val good">5.0ms</td>
       <td class="val">0.0ms</td>
-      <td class="val">6.0ms</td>
+      <td class="val">71.0ms</td>
     </tr>
     <tr>
       <td>
         <div style="font-weight:600;font-size:13px">Thời gian Tải file nội dung</div>
         <div class="metric-name">magicinfo_content_download_duration</div>
       </td>
-      <td class="val good">6.8ms</td>
+      <td class="val good">6.3ms</td>
       <td class="val">6.0ms</td>
-      <td class="val">8.0ms</td>
-      <td class="val good">8.2ms</td>
+      <td class="val">7.0ms</td>
+      <td class="val good">8.0ms</td>
       <td class="val">0.0ms</td>
-      <td class="val">11.0ms</td>
+      <td class="val">42.0ms</td>
     </tr>
     <tr>
       <td>
         <div style="font-weight:600;font-size:13px">Thời gian Kiểm tra nội dung</div>
         <div class="metric-name">magicinfo_content_check_duration</div>
       </td>
-      <td class="val good">12.3ms</td>
+      <td class="val good">11.6ms</td>
       <td class="val">11.0ms</td>
-      <td class="val">15.0ms</td>
-      <td class="val good">15.5ms</td>
+      <td class="val">14.0ms</td>
+      <td class="val good">16.0ms</td>
       <td class="val">0.0ms</td>
-      <td class="val">25.0ms</td>
-    </tr>
-    <tr>
-      <td>
-        <div style="font-weight:600;font-size:13px">Thời gian Đăng ký thiết bị</div>
-        <div class="metric-name">magicinfo_device_reg_duration</div>
-      </td>
-      <td class="val good">9.0ms</td>
-      <td class="val">8.0ms</td>
-      <td class="val">11.4ms</td>
-      <td class="val good">12.2ms</td>
-      <td class="val">0.0ms</td>
-      <td class="val">13.0ms</td>
+      <td class="val">177.0ms</td>
     </tr></tbody>
       </table>
     </div>
   </div>
 
-  <!-- COUNTERS -->
+  <!-- COUNTERS (Màn hình) -->
   <div class="section">
-    <div class="section-title">Bộ đếm hoạt động</div>
+    <div class="section-title">Bộ đếm hoạt động — Màn Hình</div>
     <div class="kpi-grid">
-  <div class="kpi-card" style="--accent-line:var(--green)">
-    <div class="kpi-label">Xác thực thành công</div>
-    <div class="kpi-value" style="color:var(--green);font-size:28px">6</div>
+    <div class="kpi-card" style="--accent-line:var(--green)">
+      <div class="kpi-label">Xác thực thành công</div>
+      <div class="kpi-value" style="color:var(--green);font-size:28px">1.200</div>
+    </div>
+    <div class="kpi-card" style="--accent-line:var(--red)">
+      <div class="kpi-label">Xác thực thất bại</div>
+      <div class="kpi-value" style="color:var(--red);font-size:28px">0</div>
+    </div>
+    <div class="kpi-card" style="--accent-line:var(--accent2)">
+      <div class="kpi-label">Heartbeat thành công</div>
+      <div class="kpi-value" style="color:var(--accent2);font-size:28px">141.406</div>
+    </div>
+    <div class="kpi-card" style="--accent-line:var(--red)">
+      <div class="kpi-label">Heartbeat thất bại</div>
+      <div class="kpi-value" style="color:var(--red);font-size:28px">0</div>
+    </div>
+    <div class="kpi-card" style="--accent-line:var(--accent)">
+      <div class="kpi-label">Lấy lịch nội dung OK</div>
+      <div class="kpi-value" style="color:var(--accent);font-size:28px">27.810</div>
+    </div>
+    <div class="kpi-card" style="--accent-line:var(--yellow)">
+      <div class="kpi-label">Tải file thành công</div>
+      <div class="kpi-value" style="color:var(--yellow);font-size:28px">27.810</div>
+    </div></div>
   </div>
-  <div class="kpi-card" style="--accent-line:var(--red)">
-    <div class="kpi-label">Xác thực thất bại</div>
-    <div class="kpi-value" style="color:var(--red);font-size:28px">0</div>
-  </div>
-  <div class="kpi-card" style="--accent-line:var(--accent2)">
-    <div class="kpi-label">Heartbeat thành công</div>
-    <div class="kpi-value" style="color:var(--accent2);font-size:28px">84</div>
-  </div>
-  <div class="kpi-card" style="--accent-line:var(--red)">
-    <div class="kpi-label">Heartbeat thất bại</div>
-    <div class="kpi-value" style="color:var(--red);font-size:28px">0</div>
-  </div>
-  <div class="kpi-card" style="--accent-line:var(--accent)">
-    <div class="kpi-label">Lấy lịch nội dung OK</div>
-    <div class="kpi-value" style="color:var(--accent);font-size:28px">20</div>
-  </div>
-  <div class="kpi-card" style="--accent-line:var(--yellow)">
-    <div class="kpi-label">Tải file thành công</div>
-    <div class="kpi-value" style="color:var(--yellow);font-size:28px">20</div>
-  </div>
-  <div class="kpi-card" style="--accent-line:var(--muted)">
-    <div class="kpi-label">File chưa có trên server</div>
-    <div class="kpi-value" style="color:var(--muted);font-size:28px">0</div>
-  </div>
-  <div class="kpi-card" style="--accent-line:#a78bfa">
-    <div class="kpi-label">Đăng ký thiết bị OK</div>
-    <div class="kpi-value" style="color:#a78bfa;font-size:28px">5</div>
-  </div></div>
+
+  
+  <div class="section">
+    <div class="section-title" style="color:#f472b6">&#128100; Qu&#7843;n Tr&#7883; Vi&#234;n &#8212; 20 VUs</div>
+
+    <div class="kpi-grid" style="margin-bottom:28px">
+      <div class="kpi-card" style="--accent-line:#f472b6">
+        <div class="kpi-label">Đăng nhập p(95)</div>
+        <div class="kpi-value" style="color:#f472b6">277.2<span style="font-size:15px;color:var(--muted)">ms</span></div>
+        <div class="kpi-unit">Ngưỡng &lt; 2.000ms</div>
+      </div>
+      <div class="kpi-card" style="--accent-line:#818cf8">
+        <div class="kpi-label">DS Thiết bị p(95)</div>
+        <div class="kpi-value" style="color:#818cf8">15.0<span style="font-size:15px;color:var(--muted)">ms</span></div>
+        <div class="kpi-unit">Ngưỡng &lt; 3.000ms</div>
+      </div>
+      <div class="kpi-card" style="--accent-line:#34d399">
+        <div class="kpi-label">Dashboard p(95)</div>
+        <div class="kpi-value" style="color:#34d399">5.2<span style="font-size:15px;color:var(--muted)">ms</span></div>
+        <div class="kpi-unit">Ngưỡng &lt; 2.000ms</div>
+      </div>
+      <div class="kpi-card" style="--accent-line:#fb923c">
+        <div class="kpi-label">Thư viện ND p(95)</div>
+        <div class="kpi-value" style="color:#fb923c">28.0<span style="font-size:15px;color:var(--muted)">ms</span></div>
+        <div class="kpi-unit">Ngưỡng &lt; 3.000ms</div>
+      </div>
+      <div class="kpi-card" style="--accent-line:#a78bfa">
+        <div class="kpi-label">Playlist p(95)</div>
+        <div class="kpi-value" style="color:#a78bfa">15.0<span style="font-size:15px;color:var(--muted)">ms</span></div>
+        <div class="kpi-unit">Ngưỡng &lt; 3.000ms</div>
+      </div>
+      <div class="kpi-card" style="--accent-line:var(--green)">
+        <div class="kpi-label">Trang admin thành công</div>
+        <div class="kpi-value" style="color:var(--green);font-size:28px">120</div>
+        <div class="kpi-unit">20 admin đăng nhập OK</div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:28px">
+      <table class="metrics-table">
+        <thead><tr>
+          <th>Trang / Chức năng</th>
+          <th>Trung bình</th><th>p(50)</th><th>p(90)</th><th>p(95)</th><th>p(99)</th><th>Tối đa</th>
+        </tr></thead>
+        <tbody><tr>
+    <td><div style="font-weight:600;font-size:13px">Đăng nhập</div><div class="metric-name">admin_login_duration</div></td>
+    <td class="val ">240.8ms</td>
+    <td class="val">244.0ms</td>
+    <td class="val">271.6ms</td>
+    <td class="val ">277.2ms</td>
+    <td class="val">0.0ms</td>
+    <td class="val">281.0ms</td>
+  </tr><tr>
+    <td><div style="font-weight:600;font-size:13px">Danh sách thiết bị</div><div class="metric-name">admin_device_list_duration</div></td>
+    <td class="val good">10.9ms</td>
+    <td class="val">10.0ms</td>
+    <td class="val">15.0ms</td>
+    <td class="val good">15.0ms</td>
+    <td class="val">0.0ms</td>
+    <td class="val">15.0ms</td>
+  </tr><tr>
+    <td><div style="font-weight:600;font-size:13px">Dashboard trạng thái</div><div class="metric-name">admin_dashboard_duration</div></td>
+    <td class="val good">3.9ms</td>
+    <td class="val">4.0ms</td>
+    <td class="val">5.0ms</td>
+    <td class="val good">5.2ms</td>
+    <td class="val">0.0ms</td>
+    <td class="val">8.0ms</td>
+  </tr><tr>
+    <td><div style="font-weight:600;font-size:13px">Thư viện nội dung</div><div class="metric-name">admin_content_list_duration</div></td>
+    <td class="val good">20.9ms</td>
+    <td class="val">19.0ms</td>
+    <td class="val">26.1ms</td>
+    <td class="val good">28.0ms</td>
+    <td class="val">0.0ms</td>
+    <td class="val">46.0ms</td>
+  </tr><tr>
+    <td><div style="font-weight:600;font-size:13px">Danh sách playlist</div><div class="metric-name">admin_playlist_duration</div></td>
+    <td class="val good">5.5ms</td>
+    <td class="val">4.0ms</td>
+    <td class="val">12.3ms</td>
+    <td class="val good">15.0ms</td>
+    <td class="val">0.0ms</td>
+    <td class="val">15.0ms</td>
+  </tr></tbody>
+      </table>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Thời gian phản hồi theo trang — Quản trị viên (ms)</h3>
+        <div class="chart-wrap"><canvas id="adminDurChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Hoạt động quản trị viên</h3>
+        <div class="chart-wrap"><canvas id="adminCountChart"></canvas></div>
+      </div>
+    </div>
   </div>
 
   <!-- FOOTER -->
   <div class="footer">
-    Được tạo bởi MagicInfo K6 Performance Suite &nbsp;·&nbsp; lúc 11:22:29 Thứ Sáu, 22 tháng 5, 2026
+    Được tạo bởi MagicInfo K6 Performance Suite &nbsp;·&nbsp; lúc 18:50:57 Thứ Hai, 25 tháng 5, 2026
   </div>
 
 </div>
@@ -391,11 +502,11 @@ const durCtx = document.getElementById("durChart").getContext("2d");
 new Chart(durCtx, {
   type: "bar",
   data: {
-    labels: ["Xác thực","Heartbeat","Kiểm tra nội dung","Đăng ký thiết bị","HTTP tổng"],
+    labels: ["Xác thực","Heartbeat","Kiểm tra nội dung","HTTP tổng"],
     datasets: [
-      { label: "Trung vị p(50)", data: ["79.0","4.0","11.0","8.0","3.8"], backgroundColor: "rgba(108,99,255,.75)", borderRadius: 6 },
-      { label: "p(95)",          data: ["89.8","4.8","15.5","12.2","11.0"], backgroundColor: "rgba(0,212,170,.75)",  borderRadius: 6 },
-      { label: "Tối đa",         data: ["93.0","5.0","25.0","13.0","82.1"], backgroundColor: "rgba(245,158,11,.45)", borderRadius: 6 }
+      { label: "Trung vị p(50)", data: ["78.0","3.0","11.0","3.2"], backgroundColor: "rgba(108,99,255,.75)", borderRadius: 6 },
+      { label: "p(95)",          data: ["97.0","5.0","16.0","8.7"], backgroundColor: "rgba(0,212,170,.75)",  borderRadius: 6 },
+      { label: "Tối đa",         data: ["452.0","38.0","177.0","450.3"], backgroundColor: "rgba(245,158,11,.45)", borderRadius: 6 }
     ]
   },
   options: {
@@ -413,10 +524,10 @@ const countCtx = document.getElementById("countChart").getContext("2d");
 new Chart(countCtx, {
   type: "doughnut",
   data: {
-    labels: ["Xác thực OK","Xác thực Lỗi","Heartbeat OK","Heartbeat Lỗi","Nội dung OK","Tải file OK","Tải file lỗi"],
+    labels: ["Xác thực OK","Xác thực Lỗi","Heartbeat OK","Heartbeat Lỗi","Nội dung OK","Tải file OK","Tải file Lỗi"],
     datasets: [{
-      data: [6,0,84,0,20,20,0],
-      backgroundColor: ["#22c55e","#ef4444","#00d4aa","#f87171","#6c63ff"],
+      data: [1200,0,141406,0,27810,27810,0],
+      backgroundColor: ["#22c55e","#ef4444","#00d4aa","#f87171","#6c63ff","#eab308","#f43f5e"],
       borderWidth: 2, borderColor: "#1a1d27", hoverOffset: 10
     }]
   },
@@ -428,6 +539,48 @@ new Chart(countCtx, {
     cutout: "62%"
   }
 });
+
+
+// Biểu đồ admin — thời gian
+const adminDurCtx = document.getElementById("adminDurChart").getContext("2d");
+new Chart(adminDurCtx, {
+  type: "bar",
+  data: {
+    labels: ["Đăng nhập","DS Thiết bị","Dashboard","Thư viện ND","Playlist"],
+    datasets: [
+      { label: "p(50)",  data: ["244.0","10.0","4.0","19.0","4.0"], backgroundColor: "rgba(244,114,182,.75)", borderRadius: 6 },
+      { label: "p(95)",  data: ["277.2","15.0","5.2","28.0","15.0"], backgroundColor: "rgba(167,139,250,.75)", borderRadius: 6 },
+      { label: "Tối đa", data: ["281.0","15.0","8.0","46.0","15.0"], backgroundColor: "rgba(251,146,60,.45)",  borderRadius: 6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: "#94a3b8", font: { size: 11 }, padding: 12 } } },
+    scales: {
+      x: { ticks: { color: "#64748b", font: { size: 10 } }, grid: { color: "rgba(45,48,80,.5)" } },
+      y: { ticks: { color: "#64748b", callback: v => v + "ms" }, grid: { color: "rgba(45,48,80,.5)" } }
+    }
+  }
+});
+// Biểu đồ admin — bộ đếm
+const adminCountCtx = document.getElementById("adminCountChart").getContext("2d");
+new Chart(adminCountCtx, {
+  type: "doughnut",
+  data: {
+    labels: ["Admin đăng nhập OK","Trang admin OK","Admin lỗi","Trang lỗi"],
+    datasets: [{
+      data: [20,120,0,0],
+      backgroundColor: ["#f472b6","#22c55e","#ef4444","#f87171"],
+      borderWidth: 2, borderColor: "#1a1d27", hoverOffset: 10
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: "right", labels: { color: "#94a3b8", font: { size: 11 }, padding: 14 } } },
+    cutout: "62%"
+  }
+});
+
 </script>
 </body>
 </html>

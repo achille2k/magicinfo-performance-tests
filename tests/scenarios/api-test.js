@@ -61,7 +61,7 @@ export default function () {
   group("Dashboard", () => {
     const start = Date.now();
     const res = http.get(
-      `${getApiUrl("")}/restapi/v1.0/dashboard/summary`,
+      getApiUrl("/ems/dashboard/devices/status"),
       { headers, tags: { name: "dashboard_summary" } }
     );
     dashboardDuration.add(Date.now() - start);
@@ -85,7 +85,7 @@ export default function () {
     // List devices (paginated)
     const listStart = Date.now();
     const listRes = http.get(
-      `${getApiUrl("")}/restapi/v1.0/rms/devices?page=0&pageSize=50`,
+      `${getApiUrl("/rms/devices")}?startIndex=1&pageSize=50`,
       { headers, tags: { name: "list_devices" } }
     );
     listDevicesDuration.add(Date.now() - listStart);
@@ -98,14 +98,13 @@ export default function () {
 
     sleep(0.3);
 
-    // Get device count/statistics
     const statsRes = http.get(
-      `${getApiUrl("")}/restapi/v1.0/rms/devices/count`,
-      { headers, tags: { name: "device_count" } }
+      `${getApiUrl("/rms/devices")}?startIndex=1&pageSize=1`,
+      { headers, tags: { name: "device_stats" } }
     );
 
     check(statsRes, {
-      "device count: status 200 or 404": (r) =>
+      "device stats: status 200": (r) =>
         r.status === 200 || r.status === 404,
     });
     apiAvailability.add(statsRes.status < 500 && statsRes.status !== 0);
@@ -117,7 +116,7 @@ export default function () {
   group("Content Management", () => {
     // List content items
     const contentRes = http.get(
-      `${getApiUrl("")}/restapi/v1.0/cms/contents?page=0&pageSize=20`,
+      `${getApiUrl("/cms/contents")}?startIndex=1&pageSize=20`,
       { headers, tags: { name: "list_content" } }
     );
 
@@ -131,7 +130,7 @@ export default function () {
 
     // List playlists
     const playlistRes = http.get(
-      `${getApiUrl("")}/restapi/v1.0/cms/playlists?page=0&pageSize=20`,
+      `${getApiUrl("/cms/playlists")}?startIndex=1&pageSize=20`,
       { headers, tags: { name: "list_playlists" } }
     );
 
@@ -147,7 +146,7 @@ export default function () {
   // ── Group: Schedule Management ───────────────────────────────────────
   group("Schedule Management", () => {
     const scheduleRes = http.get(
-      `${getApiUrl("")}/restapi/v1.0/dls/schedules?page=0&pageSize=20`,
+      `${getApiUrl("/dls/schedules")}?startIndex=1&pageSize=20`,
       { headers, tags: { name: "list_schedules" } }
     );
 
