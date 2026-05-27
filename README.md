@@ -1,222 +1,246 @@
 # MagicInfo Server - Performance Test Suite
 
 <p align="center">
-  <strong>K6 performance testing suite giả lập 200 màn hình kết nối đến Samsung MagicInfo Server</strong>
+  <strong>K6 performance testing suite giả lập môi trường tải cao phối hợp giữa màn hình thông minh (Smart Screen) và Quản trị viên kết nối đến Samsung MagicInfo Server</strong>
 </p>
 
 ---
 
-## 📋 Mô tả
+## 📋 Mô tả dự án
 
-Project này sử dụng [Grafana K6](https://k6.io/) để kiểm thử hiệu năng Samsung MagicInfo Server bằng cách giả lập **200 màn hình** kết nối đồng thời, bao gồm:
+Dự án này sử dụng [Grafana K6](https://k6.io/) để kiểm thử hiệu năng toàn diện cho Samsung MagicInfo Server. Suite kiểm thử được thiết kế để giả lập hành vi thực tế ở quy mô lớn, chạy song song hai nhóm đối tượng:
+1. **Smart Screens (Màn hình giả lập)**: Kết nối liên tục, gửi trạng thái hoạt động (heartbeat) định kỳ và kiểm tra cập nhật lịch chiếu/nội dung từ CMS.
+2. **Administrators (Quản trị viên)**: Đăng nhập hệ thống, giám sát thiết bị, duyệt nội dung và quản lý danh sách phát (playlist) rồi thoát.
 
-- 🔐 **Xác thực** (API token management)
-- 💓 **Heartbeat** định kỳ (mỗi 30 giây)
-- 📋 **Lấy playlist** được gán cho màn hình (mỗi 5 phút)
-- 📥 **Tải nội dung** trong playlist đó (đúng nội dung được trình chiếu)
+Dự án đi kèm các công cụ tự động trích xuất và tạo báo cáo HTML/Tài liệu bàn giao chuyên nghiệp bằng Tiếng Việt.
+
+---
 
 ## 🏗 Cấu trúc Project
 
-```
+```text
 magicinfo-performance-tests/
 ├── config/
-│   └── config.js              # Cấu hình trung tâm (server URL, credentials, thresholds)
+│   └── config.js              # Cấu hình trung tâm (server URL, credentials, thresholds, profiles)
 ├── lib/
-│   ├── auth.js                # Xác thực & quản lý token
-│   └── device-api.js          # REST API calls (heartbeat, content check, v.v.)
+│   ├── auth.js                # Quản lý xác thực và làm mới token (JWT)
+│   └── device-api.js          # Khai báo các REST API tương tác của màn hình và quản trị viên
 ├── tests/
 │   └── scenarios/
-│       ├── screen-simulation.js  # 🎯 Kịch bản chính: 200 màn hình
-│       ├── auth-test.js          # Kiểm thử endpoint xác thực
-│       └── api-test.js           # Kiểm thử REST API endpoints
+│       ├── admin-user-simulation.js # 🎯 Kịch bản hỗn hợp chính (Màn hình + Quản trị viên)
+│       ├── auth-test.js             # Kiểm thử tải độc lập cho endpoint xác thực (Auth/Refresh)
+│       └── api-test.js              # Kiểm thử hiệu năng độc lập cho các REST API của hệ thống
 ├── scripts/
-│   ├── generate-report.js    # Tạo báo cáo HTML tiếng Việt từ kết quả
-│   └── generate-doc.js       # Tạo tài liệu hướng dẫn bàn giao (HTML/Word)
-├── docs/                      # Tài liệu hướng dẫn sử dụng
-├── reports/                   # Báo cáo HTML/JSON (tự tạo sau khi chạy test)
-├── .env                       # Cấu hình credentials (không commit lên git)
-└── package.json
+│   ├── generate-report.js     # Trình tạo báo cáo HTML giao diện tối (Dark Mode) tiếng Việt cực kỳ chi tiết
+│   └── generate-doc.js        # Trình tạo tài liệu hướng dẫn bàn giao tự động (HTML/Word)
+├── docs/                      # Thư mục lưu trữ tài liệu hướng dẫn sử dụng kết quả
+├── reports/                   # Thư mục chứa các tệp báo cáo JSON/TXT/HTML (được sinh ra sau khi test)
+├── .env.example               # Mẫu tệp cấu hình môi trường
+├── .env                       # Tệp chứa cấu hình thực tế (được bảo mật, không đưa lên git)
+├── package.json               # Các kịch bản chạy nhanh (npm scripts) và thông tin dự án
+└── README.md                  # Hướng dẫn sử dụng dự án
 ```
 
-## ⚙️ Cài đặt
+---
+
+## ⚙️ Cài đặt & Cấu hình
 
 ### 1. Cài đặt K6
+Để chạy được kịch bản kiểm thử, máy tính của bạn cần cài đặt Grafana K6:
 
 ```powershell
-# Windows (Chocolatey)
+# Cài đặt qua Chocolatey (Windows)
 choco install k6
 
-# Windows (Winget)
+# Cài đặt qua Winget (Windows)
 winget install k6
 
-# Windows (Scoop)
+# Cài đặt qua Scoop (Windows)
 scoop install k6
 ```
+*(Đối với macOS sử dụng `brew install k6`, đối với Linux sử dụng các trình quản lý gói tương ứng)*
 
-### 2. Cấu hình môi trường
-
-Chỉnh sửa file `.env`:
+### 2. Cấu hình môi trường (`.env`)
+Tạo một tệp tin `.env` từ tệp mẫu `.env.example` trong thư mục gốc và cấu hình các thông số phù hợp với máy chủ MagicInfo cần kiểm thử:
 
 ```env
+# Địa chỉ máy chủ MagicInfo
 MAGICINFO_BASE_URL=http://localhost:7001
+
+# Tài khoản quản trị để thực hiện kiểm thử
 MAGICINFO_USERNAME=admin
-MAGICINFO_PASSWORD=your_password
+MAGICINFO_PASSWORD=your_secure_password
 ```
 
-| Biến | Mô tả | Mặc định |
-|------|-------|---------|
-| `MAGICINFO_BASE_URL` | URL của MagicInfo Server | `http://localhost:7001` |
-| `MAGICINFO_USERNAME` | Tài khoản admin | `admin` |
-| `MAGICINFO_PASSWORD` | Mật khẩu | `admin` |
-| `VIRTUAL_USERS` | Số màn hình giả lập | `200` |
+Các tham số cấu hình chính:
 
-## 🚀 Chạy Tests
+| Biến môi trường | Mô tả | Giá trị mặc định |
+| :--- | :--- | :--- |
+| `MAGICINFO_BASE_URL` | URL cơ sở kết nối tới MagicInfo Server | `http://localhost:7001` |
+| `MAGICINFO_USERNAME` | Tên tài khoản thực thi kiểm thử | `admin` |
+| `MAGICINFO_PASSWORD` | Mật khẩu tài khoản kiểm thử | `admin` |
+| `VIRTUAL_USERS` | Số lượng VUs màn hình (nếu chạy riêng lẻ) | `200` |
 
-> **Lưu ý PowerShell**: Dùng `"--env=MAGICINFO_PASSWORD=..."` (có ngoặc kép bao ngoài) nếu mật khẩu chứa ký tự đặc biệt như `!`.
+---
 
-### Smoke Test (5 màn hình - kiểm tra nhanh ~2 phút)
+## 🚀 Chạy Suite Kiểm thử
+
+Dự án cung cấp các lệnh chạy nhanh thông qua `npm scripts` được định nghĩa sẵn trong `package.json`, giúp đơn giản hóa việc thực thi.
+
+### 1. Sử dụng NPM Scripts (Khuyên dùng)
+Hãy cài đặt các thư viện Node.js cần thiết trước:
 ```powershell
-& "C:\Program Files\k6\k6.exe" run `
-  --env ENV=smoke `
-  --env MAGICINFO_BASE_URL=http://localhost:7001 `
-  --env MAGICINFO_USERNAME=admin `
-  "--env=MAGICINFO_PASSWORD=your_password" `
-  tests/scenarios/screen-simulation.js
+npm install
 ```
 
-### Load Test (200 màn hình - ~7 phút) ✅ Đã xác nhận hoạt động
+Sau đó, thực thi các câu lệnh sau tùy thuộc vào kịch bản mong muốn:
+
+*   **Chạy Smoke Test (Kịch bản kiểm tra nhanh):** Giả lập **200 màn hình** + **5 quản trị viên** song song trong thời gian ngắn (~7 phút).
+    ```powershell
+    npm run test:smoke
+    ```
+*   **Chạy Enterprise Test (Kịch bản tải cao quy mô lớn):** Giả lập **1.200 màn hình** + **20 quản trị viên** hoạt động đồng thời (~14 phút).
+    ```powershell
+    npm run test:enterprise
+    ```
+*   **Tạo Báo cáo HTML tự động:** Đọc kết quả JSON mới nhất trong thư mục `reports/` để kết xuất trang báo cáo đồ họa chuyên nghiệp.
+    ```powershell
+    npm run report
+    ```
+*   **Tạo Tài liệu bàn giao:** Sinh tài liệu hướng dẫn kỹ thuật chi tiết dưới dạng HTML/Word trong thư mục `docs/`.
+    ```powershell
+    npm run doc
+    ```
+
+---
+
+### 2. Sử dụng câu lệnh K6 trực tiếp
+Nếu muốn tùy biến nâng cao hoặc chạy các kịch bản kiểm thử độc lập, bạn có thể gọi trực tiếp công cụ `k6`:
+
+> 💡 **Mẹo chạy trên Windows PowerShell**: Nếu mật khẩu tài khoản có các ký tự đặc biệt như `!`, `@`, `#`, hãy sử dụng cú pháp `"--env=MAGICINFO_PASSWORD=your_password"` (bao bọc toàn bộ bằng dấu ngoặc kép) để tránh lỗi cú pháp PowerShell.
+
+#### Chạy kịch bản kiểm thử hỗn hợp (chính)
 ```powershell
-& "C:\Program Files\k6\k6.exe" run `
-  --env ENV=load `
-  --env MAGICINFO_BASE_URL=http://localhost:7001 `
-  --env MAGICINFO_USERNAME=admin `
-  "--env=MAGICINFO_PASSWORD=your_password" `
-  tests/scenarios/screen-simulation.js
+# Chạy ở chế độ Smoke (200 screens + 5 admins)
+k6 run --env ENV=smoke --env MAGICINFO_BASE_URL=http://localhost:7001 --env MAGICINFO_USERNAME=admin --env MAGICINFO_PASSWORD="your_password" tests/scenarios/admin-user-simulation.js
+
+# Chạy ở chế độ Enterprise (1,200 screens + 20 admins)
+k6 run --env ENV=enterprise --env MAGICINFO_BASE_URL=http://localhost:7001 --env MAGICINFO_USERNAME=admin --env MAGICINFO_PASSWORD="your_password" tests/scenarios/admin-user-simulation.js
 ```
 
-### Stress Test (tăng dần đến 250 màn hình)
+#### Chạy kiểm thử độc lập hiệu năng Endpoint Xác thực
+Dùng để đo lường giới hạn chịu tải riêng của luồng Login & Refresh Token:
 ```powershell
-& "C:\Program Files\k6\k6.exe" run `
-  --env ENV=stress `
-  --env MAGICINFO_BASE_URL=http://localhost:7001 `
-  --env MAGICINFO_USERNAME=admin `
-  "--env=MAGICINFO_PASSWORD=your_password" `
-  tests/scenarios/screen-simulation.js
+k6 run --env MAGICINFO_BASE_URL=http://localhost:7001 --env MAGICINFO_USERNAME=admin --env MAGICINFO_PASSWORD="your_password" tests/scenarios/auth-test.js
 ```
 
-### Soak Test (200 màn hình - 30 phút)
+#### Chạy kiểm thử độc lập hiệu năng các REST API
+Dùng để kiểm tra khả năng đáp ứng của hệ thống quản lý thiết bị, danh sách phát, nội dung:
 ```powershell
-& "C:\Program Files\k6\k6.exe" run `
-  --env ENV=soak `
-  --env MAGICINFO_BASE_URL=http://localhost:7001 `
-  --env MAGICINFO_USERNAME=admin `
-  "--env=MAGICINFO_PASSWORD=your_password" `
-  tests/scenarios/screen-simulation.js
+k6 run --env MAGICINFO_BASE_URL=http://localhost:7001 --env MAGICINFO_USERNAME=admin --env MAGICINFO_PASSWORD="your_password" tests/scenarios/api-test.js
 ```
 
-### Tạo báo cáo HTML sau khi chạy test
-```powershell
-# Tự động đọc file JSON mới nhất trong reports/
-node scripts/generate-report.js
+---
 
-# Hoặc chỉ định file cụ thể
-node scripts/generate-report.js reports/summary-load-2026-05-22T02-34-37.json
-```
+## 📊 Phân tích Chi tiết Kịch bản Hỗn hợp (`admin-user-simulation.js`)
 
-## 📊 Giải thích các Scenario
-
-### `screen-simulation.js` - Kịch bản chính
-
-Mỗi Virtual User (VU) đại diện cho **1 màn hình**, thực hiện đúng vòng đời của màn hình thực:
+Kịch bản này là kiểm thử cốt lõi mô phỏng sát nhất với tải thực tế của hệ thống MagicInfo bằng cách thiết lập **2 nhóm Virtual Users (VUs) hoạt động song song**:
 
 ```
-[Khởi động]
-  └─ Xác thực → lấy JWT token   (POST /auth)
-
-[Vòng lặp hoạt động — lặp lại mỗi ~5 giây]
-  ├─ Gửi Heartbeat               (GET /ems/dashboard/devices/status)
-  │
-  └─ [Mỗi 5 phút] Luồng tải nội dung:
-       Bước 1: Lấy danh sách playlist được gán cho màn hình
-               (GET /cms/playlists?startIndex=1&pageSize=1)
-       Bước 2: Lấy chi tiết playlist → biết content nào cần phát
-               (GET /cms/playlists/{playlistId})
-       Bước 3: Tải metadata chi tiết của content cần phát
-               (GET /cms/contents/{contentId})
+                                 [ BẮT ĐẦU CHẠY KIỂM THỬ ]
+                                             │
+                      ┌──────────────────────┴──────────────────────┐
+                      ▼                                             ▼
+        [ Nhóm 1: Màn hình (Screen VU) ]             [ Nhóm 2: Quản trị viên (Admin VU) ]
+                      │                                             │
+             (Bắt đầu từ 0 -> Max)                       (Bắt đầu sau màn hình 30s)
+                      │                                             │
+             ┌────────┴────────┐                          ┌─────────┴─────────┐
+             ▼                 ▼                          ▼                   ▼
+       [ Đăng nhập ]     [ Refresh Token ]          [ Đăng nhập ]       [ Đăng nhập lỗi ]
+             │           (Mỗi 30 phút)                    │             (Dừng kịch bản)
+             ▼                                            ▼
+      [ Vòng lặp chính ]                          [ Duyệt danh sách thiết bị ]
+      (Mỗi ~5 - 7 giây)                                   │
+             │                                            ▼
+             ├─ Gửi Heartbeat                     [ Xem Dashboard trạng thái ]
+             │  (POST /ems/...status)                     │
+             │                                            ▼
+             └─ [Mỗi 5 chu kỳ]                    [ Duyệt kho nội dung (CMS) ]
+                Kiểm tra cập nhật nội dung                │
+                └─ Lấy danh sách playlist                 ▼
+                └─ Lấy chi tiết playlist          [ Duyệt danh sách Playlist ]
+                └─ Tải metadata nội dung                  │
+                                                          ▼
+                                                   [ THOÁT PHIÊN LÀM VIỆC ]
+                                                (Mỗi Admin chạy duy nhất 1 lần)
 ```
 
-> **Lưu ý thiết kế**: Mỗi màn hình chỉ tải nội dung trong playlist **được gán cho nó**,
-> không tải toàn bộ CMS. Đây là đúng hành vi của màn hình MagicInfo thực tế.
-> Các VU được phân tán để không cùng gọi một content, tránh cache bias.
+### Các thông số cấu hình của 2 chế độ (`ENV`):
 
-### Các profile test
+| Chế độ (`ENV`) | Số màn hình | Số admin | Thời gian tăng tải (Ramp-up) | Thời gian duy trì (Sustain) | Tổng thời gian ước tính |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **`smoke`** | `200 VUs` | `5 VUs` | `1 phút` | `5 phút` | ~ 7 phút |
+| **`enterprise`** | `1,200 VUs` | `20 VUs` | `3 phút` | `10 phút` | ~ 14 phút |
 
-| Profile | VUs | Thời gian | Mục đích |
-|---------|-----|-----------|----------|
-| `smoke` | 5 | ~2 phút | Kiểm tra nhanh kết nối |
-| `load` | 200 | ~7 phút | Load test chính (mục tiêu) |
-| `stress` | 50→250 | ~10 phút | Tìm điểm giới hạn server |
-| `soak` | 200 | 30 phút | Kiểm tra rò rỉ tài nguyên |
+*   **Tính năng Tránh nghẽn đột ngột (Staggering)**: Dự án tự động phân tán thời gian gửi truy vấn bằng thuật toán `sleep` ngẫu nhiên để tránh hiện tượng dồn nén lưu lượng đồng thời không thực tế (thundering herd).
+*   **Quản lý vòng đời**: Các màn hình chạy liên tục lặp lại suốt phiên test, trong khi mỗi admin chỉ thực hiện đúng 1 quy trình làm việc từ đăng nhập đến duyệt tài nguyên và thoát hoàn toàn để giả lập hành vi người dùng thật.
 
-## 📈 Thresholds (Ngưỡng chấp nhận)
+---
 
-| Metric | Ngưỡng |
-|--------|--------|
-| HTTP P95 response time | < 2.000ms |
-| HTTP P99 response time | < 5.000ms |
-| Tỷ lệ lỗi HTTP | < 5% |
-| Xác thực P95 | < 1.000ms |
-| Heartbeat P95 | < 2.000ms |
-| Tính khả dụng API | > 95% |
+## 📈 Chỉ số Đo lường & Ngưỡng chấp nhận (Thresholds)
 
-## 🔧 Custom Metrics
+Hệ thống tự động chấm điểm Đạt (PASS) hay Không Đạt (FAIL) dựa trên các ràng buộc nghiêm ngặt về SLA sau:
 
-| Metric | Loại | Mô tả |
-|--------|------|-------|
-| `magicinfo_auth_success` | Counter | Số lần xác thực thành công |
-| `magicinfo_auth_fail` | Counter | Số lần xác thực thất bại |
-| `magicinfo_auth_duration` | Trend | Thời gian xác thực (ms) |
-| `magicinfo_heartbeat_success` | Counter | Số heartbeat thành công |
-| `magicinfo_heartbeat_fail` | Counter | Số heartbeat thất bại |
-| `magicinfo_heartbeat_duration` | Trend | Thời gian gửi heartbeat (ms) |
-| `magicinfo_schedule_check_duration` | Trend | Thời gian lấy playlist + chi tiết (ms) |
-| `magicinfo_content_download_success` | Counter | Số lần tải metadata content thành công |
-| `magicinfo_content_download_fail` | Counter | Số lần tải metadata content thất bại |
-| `magicinfo_content_download_duration` | Trend | Thời gian tải metadata content (ms) |
-| `magicinfo_content_check_duration` | Trend | Thời gian toàn bộ chu kỳ kiểm tra nội dung (ms) |
-| `magicinfo_api_availability` | Rate | Tỷ lệ API khả dụng (không 5xx/timeout) |
+### Ngưỡng hiệu năng chung
+*   **`http_req_failed`**: Tỷ lệ request lỗi < 5% (`rate < 0.05`).
+*   **`http_req_duration`**: Thời gian phản hồi trung bình 95% số request < 3.000ms (`p(95) < 3000`) và 99% số request < 8.000ms (`p(99) < 8000`).
+*   **`magicinfo_api_availability`**: Tỷ lệ khả dụng của API hệ thống > 95% (`rate > 0.95`).
 
-## 📝 MagicInfo API Reference (v2.0)
+### Chỉ số riêng của Màn hình giả lập
+*   **Xác thực (`magicinfo_auth_duration`)**: p(95) < 1.000ms.
+*   **Heartbeat (`magicinfo_heartbeat_duration`)**: p(95) < 2.000ms.
+*   **Kiểm tra nội dung (`magicinfo_content_check_duration`)**: p(95) < 3.000ms.
+*   **Tải danh mục phát (`magicinfo_schedule_check_duration`)**: p(95) < 3.000ms.
+*   **Tải thông tin tệp tin (`magicinfo_content_download_duration`)**: p(95) < 10.000ms.
 
-| Endpoint | Method | Mục đích |
-|----------|--------|---------|
-| `/MagicInfo/restapi/v2.0/auth` | POST | Đăng nhập, lấy JWT token |
-| `/MagicInfo/restapi/v2.0/rms/devices` | GET | Danh sách thiết bị đã đăng ký |
-| `/MagicInfo/restapi/v2.0/ems/dashboard/devices/status` | GET | Trạng thái thiết bị (heartbeat) |
-| `/MagicInfo/restapi/v2.0/cms/playlists` | GET | Danh sách playlist (lọc theo thiết bị) |
-| `/MagicInfo/restapi/v2.0/cms/playlists/{playlistId}` | GET | Chi tiết playlist kèm danh sách content |
-| `/MagicInfo/restapi/v2.0/cms/contents/{contentId}` | GET | Metadata chi tiết của nội dung cần phát |
+### Chỉ số riêng của Quản trị viên
+*   **Đăng nhập admin (`admin_login_duration`)**: p(95) < 2.000ms.
+*   **Xem danh sách thiết bị (`admin_device_list_duration`)**: p(95) < 2.000ms.
+*   **Xem Dashboard (`admin_dashboard_duration`)**: p(95) < 2.000ms.
+*   **Xem danh sách nội dung (`admin_content_list_duration`)**: p(95) < 3.000ms.
+*   **Xem danh sách playlist (`admin_playlist_duration`)**: p(95) < 3.000ms.
 
-**Auth header**: `api_key: <JWT_token>`
+---
 
-### Luồng tải nội dung chi tiết
+## 🔧 Danh sách Custom Metrics thu thập
 
-```
-Màn hình                          MagicInfo Server
-   │                                      │
-   │── GET /cms/playlists ───────────────>│  "Playlist của tôi là gì?"
-   │<─ [{playlistId, playlistName, ...}] ─│
-   │                                      │
-   │── GET /cms/playlists/{id} ──────────>│  "Playlist này có những content nào?"
-   │<─ {contents: [{contentId, ...}]} ───│
-   │                                      │
-   │── GET /cms/contents/{contentId} ───>│  "Tải metadata content tôi cần phát"
-   │<─ {layout, duration, version, ...} ─│
-```
+Dự án phân tách rõ ràng và thu thập một loạt chỉ số hiệu năng cụ thể để đưa vào báo cáo cuối cùng:
 
-## 💡 Lưu ý
+### 🖥️ Chỉ số Màn hình giả lập (Screens)
+*   `magicinfo_auth_success` / `magicinfo_auth_fail` (Counter): Số phiên đăng nhập màn hình thành công / thất bại.
+*   `magicinfo_auth_duration` (Trend): Thời gian xử lý yêu cầu đăng nhập màn hình.
+*   `magicinfo_heartbeat_success` / `magicinfo_heartbeat_fail` (Counter): Số lượng gửi trạng thái màn hình thành công / thất bại.
+*   `magicinfo_heartbeat_duration` (Trend): Thời gian gửi heartbeat.
+*   `magicinfo_schedule_check_duration` (Trend): Thời gian truy vấn lịch phát và playlist được phân bổ.
+*   `magicinfo_content_download_success` / `magicinfo_content_download_fail` (Counter): Thống kê tải siêu dữ liệu nội dung.
+*   `magicinfo_content_download_duration` (Trend): Thời gian tải siêu dữ liệu nội dung cần chiếu.
+*   `magicinfo_content_check_duration` (Trend): Tổng thời gian của cả chu trình kiểm tra/cập nhật thông tin trình chiếu.
 
-- **Port mặc định**: MagicInfo Server dùng port `7001` (HTTP) hoặc `7002` (HTTPS)
-- **Staggering**: Script tự động phân tán kết nối để tránh thundering herd
-- **Token refresh**: Token được tự động làm mới sau 30 phút
-- **Báo cáo**: Mỗi lần chạy tự tạo file JSON/TXT/HTML trong thư mục `reports/`
+### 👤 Chỉ số Quản trị viên (Admins)
+*   `admin_login_success` / `admin_login_fail` (Counter): Thống kê kết quả đăng nhập admin.
+*   `admin_login_duration` (Trend): Thời gian phản hồi đăng nhập của admin.
+*   `admin_device_list_duration` (Trend): Thời gian tải trang danh sách thiết bị.
+*   `admin_dashboard_duration` (Trend): Thời gian phản hồi dữ liệu tổng quan thiết bị trên Dashboard.
+*   `admin_content_list_duration` (Trend): Thời gian tải kho quản lý nội dung.
+*   `admin_playlist_duration` (Trend): Thời gian phản hồi của danh sách phát.
+*   `admin_page_success` / `admin_page_fail` (Counter): Tổng số lượng tác vụ trang quản trị thành công / thất bại.
+
+---
+
+## 📈 Xuất Báo cáo & Lưu trữ kết quả
+
+Mỗi lần chạy thành công, kịch bản kiểm thử sẽ tự động tạo ra ba tệp tin lưu trong thư mục `reports/`:
+1.  **Tệp JSON (`summary-{env}-{timestamp}.json`)**: Chứa toàn bộ dữ liệu chỉ số thô được xuất từ k6.
+2.  **Tệp Văn bản (`summary-{env}-{timestamp}.txt`)**: Tóm tắt nhanh kết quả, so khớp ngưỡng chấp nhận hiển thị ngay tại terminal.
+3.  **Tệp HTML Báo cáo đồ họa (`summary-{env}-{timestamp}.html`)**: Được tạo ra khi chạy lệnh `npm run report`. Tệp này tích hợp sẵn Chart.js tạo biểu đồ trực quan, hỗ trợ giao diện tối hiện đại, hiển thị trực quan tỷ lệ Đạt/Không Đạt của các SLA, phân bố số lượng request và biểu đồ xu hướng thời gian phản hồi. Báo cáo HTML sẽ **tự động mở trên trình duyệt mặc định** của bạn ngay khi tạo xong.

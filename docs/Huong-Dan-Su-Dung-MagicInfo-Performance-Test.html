@@ -234,7 +234,7 @@
 
   <div class="cover-meta">
     <strong>Phiên bản:</strong> &nbsp;1.0.0<br/>
-    <strong>Ngày lập:</strong> &nbsp;25/05/2026<br/>
+    <strong>Ngày lập:</strong> &nbsp;27/05/2026<br/>
     <strong>Áp dụng cho:</strong> &nbsp;MagicInfo Server 9.x (21.1040.2+)<br/>
     <strong>Công cụ:</strong> &nbsp;K6 Load Testing Framework<br/>
     <strong>Ngôn ngữ:</strong> &nbsp;JavaScript (ES Modules)
@@ -316,7 +316,7 @@
   <tr><th>Thành phần</th><th>File</th><th>Mô tả</th></tr>
   <tr><td><strong>Cấu hình</strong></td><td><code>config/config.js</code></td><td>Tham số server, tài khoản, ngưỡng, kịch bản</td></tr>
   <tr><td><strong>Thư viện API</strong></td><td><code>lib/device-api.js</code></td><td>Logic gọi API: xác thực, heartbeat, nội dung</td></tr>
-  <tr><td><strong>Kịch bản test</strong></td><td><code>tests/scenarios/screen-simulation.js</code></td><td>Kịch bản chính điều phối luồng màn hình</td></tr>
+  <tr><td><strong>Kịch bản test</strong></td><td><code>tests/scenarios/admin-user-simulation.js</code></td><td>Kịch bản chính điều phối luồng màn hình & quản trị viên</td></tr>
   <tr><td><strong>Tạo báo cáo</strong></td><td><code>scripts/generate-report.js</code></td><td>Xuất báo cáo HTML từ dữ liệu JSON của K6</td></tr>
   <tr><td><strong>Báo cáo đầu ra</strong></td><td><code>reports/</code></td><td>Thư mục chứa JSON + HTML sau mỗi lần chạy</td></tr>
 </table>
@@ -749,7 +749,7 @@ node scripts/generate-report.js reports/summary-load-2026-05-22T03-57-15.json</p
 │   └── device-api.js                  # Thư viện gọi API MagicInfo
 ├── tests/
 │   └── scenarios/
-│       └── screen-simulation.js       # Kịch bản kiểm thử chính
+│       └── admin-user-simulation.js   # Kịch bản kiểm thử chính (Màn hình + Admin)
 ├── scripts/
 │   ├── generate-report.js             # Tạo báo cáo HTML
 │   └── generate-doc.js                # Tạo tài liệu này
@@ -805,7 +805,7 @@ node scripts/generate-report.js reports/summary-load-2026-05-22T03-57-15.json</p
 <br/><br/>
 <div style="text-align:center;color:#6b7280;font-size:10pt;border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px">
   <strong>MagicInfo Performance Test Suite</strong> — Phiên bản 1.0.0<br/>
-  Tài liệu được tạo tự động ngày 25/05/2026
+  Tài liệu được tạo tự động ngày 27/05/2026
 </div>
 
 </body>

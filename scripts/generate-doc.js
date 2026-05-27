@@ -330,7 +330,7 @@ const html = `<!DOCTYPE html>
   <tr><th>Thành phần</th><th>File</th><th>Mô tả</th></tr>
   <tr><td><strong>Cấu hình</strong></td><td><code>config/config.js</code></td><td>Tham số server, tài khoản, ngưỡng, kịch bản</td></tr>
   <tr><td><strong>Thư viện API</strong></td><td><code>lib/device-api.js</code></td><td>Logic gọi API: xác thực, heartbeat, nội dung</td></tr>
-  <tr><td><strong>Kịch bản test</strong></td><td><code>tests/scenarios/screen-simulation.js</code></td><td>Kịch bản chính điều phối luồng màn hình</td></tr>
+  <tr><td><strong>Kịch bản test</strong></td><td><code>tests/scenarios/admin-user-simulation.js</code></td><td>Kịch bản chính điều phối luồng màn hình & quản trị viên</td></tr>
   <tr><td><strong>Tạo báo cáo</strong></td><td><code>scripts/generate-report.js</code></td><td>Xuất báo cáo HTML từ dữ liệu JSON của K6</td></tr>
   <tr><td><strong>Báo cáo đầu ra</strong></td><td><code>reports/</code></td><td>Thư mục chứa JSON + HTML sau mỗi lần chạy</td></tr>
 </table>
@@ -763,7 +763,7 @@ node scripts/generate-report.js reports/summary-load-2026-05-22T03-57-15.json</p
 │   └── device-api.js                  # Thư viện gọi API MagicInfo
 ├── tests/
 │   └── scenarios/
-│       └── screen-simulation.js       # Kịch bản kiểm thử chính
+│       └── admin-user-simulation.js   # Kịch bản kiểm thử chính (Màn hình + Admin)
 ├── scripts/
 │   ├── generate-report.js             # Tạo báo cáo HTML
 │   └── generate-doc.js                # Tạo tài liệu này
